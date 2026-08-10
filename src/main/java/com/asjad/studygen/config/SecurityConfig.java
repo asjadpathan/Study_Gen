@@ -20,6 +20,29 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * SecurityConfig is a configuration class that defines the security settings for the application.
+ * It leverages Spring Security to configure authentication and authorization mechanisms,
+ * along with JWT-based authentication and CORS policies.
+ *
+ * Key Responsibilities:
+ * - Configures a SecurityFilterChain to handle HTTP security settings, such as disabling CSRF,
+ *   enabling CORS, and setting request authorization rules.
+ * - Sets up a stateless session management policy to ensure that no session state is maintained by the server.
+ * - Configures a custom JWT authentication filter to validate JWT tokens for secure access to protected endpoints.
+ * - Defines beans for authentication management, password encoding, and CORS configuration.
+ *
+ * Dependencies:
+ * - UserDetailsServiceImpl: Custom implementation to load user details from the underlying database.
+ * - JwtAuthFilter: Custom filter to handle JWT authentication for incoming requests.
+ *
+ * Configuration Details:
+ * - Security filter chain specifies the endpoints that are publicly accessible
+ *   and those that require authentication.
+ * - Password encoding is handled using BCryptPasswordEncoder for secure storage of user passwords.
+ * - CORS configuration sets up allowed origins, methods, headers, and credentials for cross-origin requests.
+ * - AuthenticationProvider uses the custom UserDetailsServiceImpl and password encoder for authentication.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

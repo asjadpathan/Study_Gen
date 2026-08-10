@@ -1,0 +1,4 @@
+﻿.studyroom { width: 100%; }
+.studyroom__container { max-width: 1126px; margin: 0 auto; padding: 40px 32px; box-sizing: border-box; }
+.studyroom__container h1 { margin: 0 0 24px; font-size: 1.75rem; font-weight: 700; color: #111827; }
+
