@@ -1,0 +1,12 @@
+.dashboard { width: 100%; }
+.dashboard__container { max-width: 1126px; margin: 0 auto; padding: 40px 32px; box-sizing: border-box; }
+.dashboard__header { margin-bottom: 32px; }
+.dashboard__title { margin: 0 0 8px; font-size: 1.75rem; font-weight: 700; color: #111827; }
+.dashboard__subtitle { margin: 0; font-size: 0.9rem; color: #6b7280; }
+.dashboard__grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-top: 24px; }
+.dashboard__side { display: flex; flex-direction: column; gap: 24px; }
+
+@media (max-width: 768px) {
+  .dashboard__container { padding: 24px 20px; }
+  .dashboard__grid { grid-template-columns: 1fr; }
+}

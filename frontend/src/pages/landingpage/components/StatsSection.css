@@ -1,0 +1,32 @@
+/* ========================================
+   STATS SECTION
+   ======================================== */
+
+.stats { width: 100%; background: #f8fafc; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+
+.stats__container { max-width: 1126px; margin: 0 auto; padding: 64px 32px; box-sizing: border-box; }
+
+.stats__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+
+.stats__item { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+
+.stats__value {
+  font-size: clamp(2.8rem, 5vw, 3.8rem);
+  font-weight: 800; color: #111827;
+  letter-spacing: -0.04em; line-height: 1;
+}
+.stats__value--accent { color: #2563eb; }
+
+.stats__label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; color: #6b7280; text-transform: uppercase; }
+
+@media (max-width: 1024px) {
+  .stats__container { padding: 48px 24px; }
+  .stats__value { font-size: clamp(2.2rem, 4vw, 3rem); }
+}
+
+@media (max-width: 480px) {
+  .stats__container { padding: 40px 20px; }
+  .stats__grid { grid-template-columns: 1fr; gap: 36px; }
+  .stats__value { font-size: 2.6rem; }
+  .stats__label { font-size: 0.75rem; }
+}

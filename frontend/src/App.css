@@ -1,0 +1,14 @@
+/* ========================================
+   APP — layout wrappers
+   ======================================== */
+
+.app__layout {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+}
+
+.app__main {
+  flex: 1;
+  min-width: 0;
+}
