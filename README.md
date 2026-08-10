@@ -54,8 +54,8 @@ The backend will be available at `http://localhost:8080`.
 Navigate to the frontend directory:
 
 ```bash
-cd frontend
-npm install
+cd frontend (For change the Directory)
+npm install (Intalling the dependancies)
 ```
 
 ### 2. Run the Frontend (Development Mode)
@@ -63,7 +63,7 @@ npm install
 Start the Vite development server:
 
 ```bash
-npm run dev
+npm run dev 
 ```
 
 The frontend will typically be available at `http://localhost:5173`. Check the terminal output for the exact URL.
