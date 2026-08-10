@@ -25,4 +25,10 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        System.out.println("Health check");
+        return ResponseEntity.ok("OK");
+    }
 }
