@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class RoadmapService {
 
     private final RoadmapRepository roadmapRepository;
-
     @Transactional
     public RoadmapResponse createRoadmap(User user, CreateRoadmapRequest request) {
         Roadmap roadmap = new Roadmap();
