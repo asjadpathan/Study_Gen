@@ -244,13 +244,17 @@ The backend is built with Spring Boot and includes the Maven Wrapper (`mvnw` / `
 
 ### 1. Start the Application
 
+Navigate to the `backend` folder:
+
 **Windows (PowerShell / Command Prompt):**
 ```powershell
+cd backend
 .\mvnw.cmd spring-boot:run
 ```
 
 **Linux / macOS:**
 ```bash
+cd backend
 chmod +x ./mvnw
 ./mvnw spring-boot:run
 ```
@@ -417,56 +421,45 @@ All endpoints are prefixed with `/api`. Authenticated endpoints require the `Aut
 
 ```text
 Study_Gen/
-├── .env.example                         # Environment variables template
-├── docker-compose.yml                   # PostgreSQL container definition
-├── pom.xml                              # Maven build file (Spring Boot 4.1.0, Java 21)
-├── mvnw / mvnw.cmd                      # Maven Wrapper scripts
+├── backend/                             # Spring Boot Backend (Java 21, Spring Boot 4.1.0)
+│   ├── .env                             # Active environment variables
+│   ├── .env.example                     # Template environment variables
+│   ├── docker-compose.yml               # Backend PostgreSQL container definition
+│   ├── pom.xml                          # Maven build file
+│   ├── mvnw / mvnw.cmd                  # Maven Wrapper scripts
+│   ├── .mvn/                            # Maven wrapper configurations
+│   ├── src/main/java/com/asjad/studygen/# Java Application Source
+│   │   ├── config/                      # Security, CORS & Web Configuration
+│   │   ├── controller/                  # REST Controllers (Auth, Roadmap, Modules, etc.)
+│   │   ├── dto/                         # Data Transfer Objects
+│   │   ├── entity/                      # JPA Entities (User, Roadmap, Module, etc.)
+│   │   ├── repository/                  # Spring Data JPA Repositories
+│   │   ├── security/                    # JWT Filters & UserDetailsService
+│   │   └── service/                     # Core Business & Gemini AI Services
+│   └── src/main/resources/
+│       ├── application.properties       # Application configurations
+│       └── db/migration/                # Flyway database migrations (V1 to V12)
 │
-├── src/main/java/com/asjad/studygen/    # Backend Source Code
-│   ├── config/                          # SecurityConfig, CorsConfig, JwtFilter
-│   ├── controller/                      # REST API Controllers (17 controllers)
-│   ├── dto/                             # Request/Response Data Transfer Objects
-│   ├── entity/                          # JPA Entities (User, Roadmap, Module, etc.)
-│   ├── repository/                      # Spring Data JPA Repositories
-│   ├── security/                        # JwtTokenProvider, CustomUserDetailsService
-│   └── service/                         # Business & AI Services
-│       ├── TeachingContentService.java  # 3-part structured curriculum generator
-│       ├── MasteryProgressionService.java # 80% mark gating & module unlocking
-│       ├── RoadmapService.java          # Adaptive roadmap generation
-│       ├── AnalyticsService.java        # Focus tracking & consistency heatmap
-│       └── ...
+├── frontend/                            # React + Vite Single Page Application
+│   ├── package.json                     # Dependencies & scripts
+│   ├── vite.config.js                   # Vite dev server & proxy settings
+│   ├── index.html                       # HTML entry point with favicon
+│   └── src/
+│       ├── assets/                      # Icons, images, and logos
+│       ├── components/                  # UI components (Heatmap, Nav, StudyRoom, etc.)
+│       ├── context/                     # AuthContext, ToastContext
+│       ├── layouts/                     # Responsive AppShell layouts
+│       ├── pages/                       # Application Views (Dashboard, Roadmap, etc.)
+│       └── services/                    # Axios API client & backend endpoints
 │
-├── src/main/resources/
-│   ├── application.properties           # Spring Boot application configuration
-│   └── db/migration/                    # Flyway database migrations (V1 to V12)
+├── docs/                                # Technical Architecture & AI Documentation
+│   ├── CORE_LOGIC_DOCUMENTATION.md      # Deep-dive architecture specifications
+│   ├── ai_features_overview.md          # Comprehensive breakdown of AI features
+│   └── analysis_results.md              # Project analysis and verification logs
 │
-└── frontend/                            # Frontend Source Code (React 19 + Vite 8)
-    ├── package.json                     # Dependencies & scripts
-    ├── vite.config.js                   # Vite configuration
-    ├── index.html                       # HTML root template with official logo favicon
-    └── src/
-        ├── assets/images/logo.png       # Official StudyGen high-resolution logo
-        ├── components/                  # Reusable UI components
-        │   ├── studyroom/               # PomodoroTimer, ProductivityAnalytics
-        │   ├── Heatmap.jsx              # Week-aligned 7-row consistency heatmap
-        │   ├── Navbar.jsx               # Top navigation with user badge & logo
-        │   ├── Sidebar.jsx              # Sidebar navigation with active routes
-        │   └── ...
-        ├── context/                     # AuthContext, ToastContext
-        ├── layouts/                     # AppShell layout with responsive grid
-        ├── pages/                       # Route pages
-        │   ├── Landing.jsx              # Public landing page
-        │   ├── Auth.jsx                 # Login & Registration
-        │   ├── Dashboard/               # Student dashboard
-        │   ├── GenerateRoadmap/         # Roadmap generator & diagnostic test
-        │   ├── ModuleStudy.jsx          # 3-part teaching reader (Basic/Inter/Adv)
-        │   ├── ModuleTest.jsx           # 80% pass threshold assessment
-        │   ├── StudyRoom.jsx            # Deep focus room & productivity analytics
-        │   ├── PracticeHub.jsx          # Drills & spaced repetition
-        │   ├── Documents.jsx            # Document analyzer & RAG chat
-        │   ├── Career.jsx               # Career pathways & readiness scoring
-        │   └── Resources.jsx            # Curated developer resources
-        └── services/                    # Axios API client & endpoints
+├── docker-compose.yml                   # Root-level PostgreSQL container service
+├── .gitignore                           # Workspace git ignore configuration
+└── README.md                            # Main project overview & documentation
 ```
 
 ---
