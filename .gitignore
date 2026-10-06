@@ -23,18 +23,6 @@ target/
 *.iws
 *.iml
 *.ipr
-<<<<<<< HEAD
-.env
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-=======
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -51,7 +39,6 @@ build/
 # OS Files
 .DS_Store
 Thumbs.db
->>>>>>> 74c5608167a0325d1a09e7a8dbf3b2c09b6c8ee3
 
 # Log files
 *.log
