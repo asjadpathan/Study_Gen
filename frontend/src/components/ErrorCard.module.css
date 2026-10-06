@@ -1,0 +1,89 @@
+.errorCard {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-xl, 16px);
+  padding: 2.25rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 14px -2px rgba(239, 68, 68, 0.08);
+}
+
+.iconCircle {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: #fee2e2;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 0 0 6px #fef2f2;
+}
+
+.statusBadge {
+  display: inline-block;
+  background-color: #fee2e2;
+  color: #991b1b;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  margin-bottom: 0.5rem;
+  border: 1px solid #fca5a5;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.45rem 0;
+}
+
+.message {
+  font-size: 0.9375rem;
+  color: #4b5563;
+  max-width: 480px;
+  line-height: 1.55;
+  margin: 0 0 1.5rem 0;
+}
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.retryBtn {
+  background-color: var(--color-primary, #2563eb) !important;
+  border-color: var(--color-primary, #2563eb) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.retryBtn:hover {
+  background-color: var(--color-primary-dark, #1d4ed8) !important;
+}
+
+.reloadBtn {
+  background-color: #111827 !important;
+  border-color: #111827 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.reloadBtn:hover {
+  background-color: #1f2937 !important;
+}
+
+.secondaryBtn {
+  border-color: #d1d5db !important;
+  color: #374151 !important;
+}

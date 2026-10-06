@@ -1,0 +1,512 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.pageHeader {
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+/* Wizard Grid Layout (Step Rail | Form | Summary Panel) */
+.wizardLayout {
+  display: grid;
+  grid-template-columns: 220px 1fr 260px;
+  gap: 1.5rem;
+  align-items: start;
+  width: 100%;
+}
+
+.stepRail {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: 1.5rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 80px;
+}
+
+.formArea {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.formCard {
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  min-height: 480px;
+  justify-content: space-between;
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stepHeaderTitle {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 0.2rem;
+}
+
+.stepHeaderDesc {
+  font-size: 0.925rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.errorAlert {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Form Controls */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.required {
+  color: #ef4444;
+}
+
+.input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.925rem;
+  color: var(--color-text);
+  background-color: #ffffff;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  resize: vertical;
+}
+
+.textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.charCount {
+  font-size: 0.775rem;
+  color: var(--color-text-light);
+  align-self: flex-end;
+}
+
+/* Step 2: Segmented Control & Tag Chips */
+.segmentedControl {
+  display: flex;
+  background-color: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.segmentBtn {
+  flex: 1;
+  padding: 0.65rem 0;
+  background: none;
+  border: none;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.segmentActive {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+}
+
+.chipsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  background-color: var(--color-tertiary-light);
+  color: var(--color-tertiary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.chipRemove {
+  background: none;
+  border: none;
+  color: var(--color-tertiary);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Step 3: Range Slider Custom Styles */
+.sliderLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sliderValue {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--color-primary);
+  font-size: 0.95rem;
+}
+
+.rangeSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-50);
+  outline: none;
+  margin: 0.75rem 0;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
+  transition: transform var(--transition-fast);
+}
+
+.rangeSlider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.rangeSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  border: none;
+}
+
+.totalHoursCallout {
+  background-color: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+/* Step 4: 2x2 Learning Style Cards */
+.styleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.styleCard {
+  background-color: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: all var(--transition-normal);
+}
+
+.styleCard:hover {
+  border-color: var(--color-primary-200);
+  transform: translateY(-2px);
+}
+
+.styleCardSelected {
+  border-color: var(--color-primary) !important;
+  background-color: var(--color-primary-50) !important;
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.15);
+}
+
+.styleIcon {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.styleTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.styleDesc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+/* Step 5: Uploads & Context */
+.hiddenFileInput {
+  display: none;
+}
+
+.uploadBox {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  text-align: center;
+  background-color: var(--color-bg);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.uploadBox:hover {
+  border-color: var(--color-primary);
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.85rem;
+  background-color: var(--color-bg);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+}
+
+.urlInputRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.urlList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.urlTag {
+  font-size: 0.825rem;
+  color: var(--color-primary);
+}
+
+/* Step 6: Review Cards */
+.reviewCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.reviewCard {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.reviewHeader h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.editLink {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-decoration: underline;
+}
+
+/* Footer Buttons */
+.formFooterActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  margin-top: 1rem;
+}
+
+.nextBtn,
+.generateBtn {
+  margin-left: auto;
+}
+
+/* Desktop Summary Panel (≥1024px) */
+.summaryPanel {
+  position: sticky;
+  top: 80px;
+}
+
+.summaryCard {
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.summaryTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.summaryDivider {
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.summaryLabel {
+  color: var(--color-text-muted);
+}
+
+.summaryValue {
+  font-weight: 700;
+  color: var(--color-text);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Full-Page Fixed Generation Overlay */
+.overlayBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-color: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.overlayContent {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.takingLongerNote {
+  color: #fef3c7;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1.25rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Responsive Rules below 1024px */
+@media (max-width: 1023px) {
+  .wizardLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .stepRail {
+    position: static;
+    display: none; /* Mobile indicator embedded in header or step 6 */
+  }
+
+  .summaryPanel {
+    display: none; /* Folded into Step 6 below 1024px */
+  }
+
+  .styleGrid,
+  .reviewCardsGrid {
+    grid-template-columns: 1fr;
+  }
+}

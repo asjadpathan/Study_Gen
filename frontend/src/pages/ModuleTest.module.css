@@ -1,0 +1,388 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+/* 1. Pre-start Screen */
+.prestartCard {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.prestartBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.moduleTag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  background-color: var(--color-primary-50);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+}
+
+.passedChip {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--color-success);
+  background-color: rgba(16, 185, 129, 0.15);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+.prestartTitle {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.prestartSubtitle {
+  font-size: 1rem;
+  color: var(--color-neutral-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.statBox {
+  background-color: var(--color-neutral-50);
+  border: 1px solid var(--color-border);
+  padding: 1rem;
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.25rem;
+}
+
+.statBoxLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-neutral-500);
+  text-transform: uppercase;
+}
+
+.statBoxValue {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.cooldownBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.25rem;
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #b45309;
+}
+
+.countdownPill {
+  background-color: #f59e0b;
+  color: #ffffff;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.alreadyPassedBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-xl);
+  gap: 1rem;
+}
+
+.alreadyPassedText h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-success);
+  margin: 0 0 0.25rem 0;
+}
+
+.alreadyPassedText p {
+  font-size: 0.9rem;
+  color: var(--color-neutral-700);
+  margin: 0;
+}
+
+.alreadyPassedActions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.prestartActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.startBtn {
+  font-weight: 800;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* 2. Quiz Screen */
+.quizTopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.testLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.quizModuleTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0.2rem 0 0 0;
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--color-neutral-600);
+}
+
+.quizFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.submitBtn {
+  font-weight: 800;
+}
+
+/* 3. Result Screen & Outcomes */
+.passOutcomeCard {
+  padding: 2rem;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: var(--color-surface);
+}
+
+.failOutcomeCard {
+  padding: 2rem;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: var(--color-surface);
+}
+
+.outcomeHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.outcomeHeader h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0 0 0.25rem 0;
+}
+
+.celebrationIcon, .failIcon {
+  font-size: 2.75rem;
+}
+
+.unlockedText {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-success);
+  margin: 0;
+}
+
+.encouragingNote {
+  font-size: 0.9rem;
+  color: var(--color-neutral-600);
+  margin: 0;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.masteryPill {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: var(--color-primary-50);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+.streakPill {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ea580c;
+  background-color: rgba(234, 88, 12, 0.1);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+.weakConceptsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--color-neutral-50);
+  padding: 1rem;
+  border-radius: var(--radius-xl);
+}
+
+.weakConceptsTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-neutral-700);
+}
+
+.weakChipsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.weakConceptChip {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
+  border-radius: var(--radius-full);
+}
+
+.attemptsNotice {
+  font-size: 0.85rem;
+  color: var(--color-neutral-600);
+}
+
+.outcomeActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+/* Confetti Burst */
+.confettiWrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  height: 200px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.confettiPiece {
+  position: absolute;
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  animation: confettiFall 2.5s ease-out forwards;
+}
+
+.c1 { background-color: #6366f1; left: 15%; animation-delay: 0.1s; }
+.c2 { background-color: #10b981; left: 30%; animation-delay: 0.25s; }
+.c3 { background-color: #f59e0b; left: 45%; animation-delay: 0.05s; }
+.c4 { background-color: #ec4899; left: 60%; animation-delay: 0.3s; }
+.c5 { background-color: #3b82f6; left: 75%; animation-delay: 0.15s; }
+.c6 { background-color: #8b5cf6; left: 90%; animation-delay: 0.2s; }
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(220px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .alreadyPassedBanner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .outcomeActions {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}

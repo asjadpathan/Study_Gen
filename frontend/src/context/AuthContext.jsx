@@ -28,11 +28,13 @@ export function AuthProvider({ children }) {
       email: authResponse.email,
     };
     localStorage.setItem('studygen_user', JSON.stringify(userData));
+    localStorage.setItem('token', authResponse.token);
     setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem('studygen_user');
+    localStorage.removeItem('token');
     setUser(null);
   };
 

@@ -1,53 +1,63 @@
-import './Footer.css'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import logoImg from '../assets/images/logo.png';
+import styles from './Footer.module.css';
 
 const Footer = () => {
   return (
-    <footer className="footer">
-      <div className="footer__container">
-        {/* Top: Brand + Link Columns */}
-        <div className="footer__top">
-          <div className="footer__brand">
-            <span className="footer__logo">EduAI</span>
-            <p className="footer__tagline">
-              Empowering the next generation of learners through artificial intelligence and personalized growth maps.
+    <footer className={styles.footer}>
+      <div className={styles.container}>
+        <div className={styles.topSection}>
+          <div className={styles.brandInfo}>
+            <Link to="/" className={styles.logo} aria-label="StudyGen Home">
+              <div className={styles.footerLogoWrapper}>
+                <img src={logoImg} alt="StudyGen" className={styles.footerLogo} />
+              </div>
+            </Link>
+            <p className={styles.tagline}>
+              Accelerating human mastery with AI-driven personalized learning paths, diagnostic assessment, and interactive study rooms.
             </p>
-            <p className="footer__copy">&copy; 2024 EduAI Personalized Learning. All rights reserved.</p>
           </div>
 
-          <div className="footer__columns">
-            <div className="footer__column">
-              <h4>Product</h4>
-              <a href="#about">About</a>
-              <a href="#careers">Careers</a>
-              <a href="#blog">Blog</a>
+          <div className={styles.linksGrid}>
+            <div className={styles.linkColumn}>
+              <h4 className={styles.columnTitle}>Product</h4>
+              <a href="#features" className={styles.link}>Features</a>
+              <a href="#how-it-works" className={styles.link}>How It Works</a>
+              <Link to="/auth?tab=signup" className={styles.link}>Get Started</Link>
             </div>
-            <div className="footer__column">
-              <h4>Resources</h4>
-              <a href="#api">API</a>
-              <a href="#guides">Guides</a>
-              <a href="#help">Help Center</a>
+
+            <div className={styles.linkColumn}>
+              <h4 className={styles.columnTitle}>Platform</h4>
+              <span className={styles.staticLink}>AI Roadmaps</span>
+              <span className={styles.staticLink}>Diagnostic Testing</span>
+              <span className={styles.staticLink}>Document Analyzer</span>
+              <span className={styles.staticLink}>Study Chatbot</span>
             </div>
-            <div className="footer__column">
-              <h4>Legal</h4>
-              <a href="#privacy">Privacy</a>
-              <a href="#terms">Terms</a>
-            </div>
-            <div className="footer__column">
-              <h4>Social</h4>
-              <a href="#twitter">Twitter</a>
-              <a href="#linkedin">LinkedIn</a>
-              <a href="#discord">Discord</a>
+
+            <div className={styles.linkColumn}>
+              <h4 className={styles.columnTitle}>Company</h4>
+              <span className={styles.staticLink}>About Us</span>
+              <span className={styles.staticLink}>Careers</span>
+              <span className={styles.staticLink}>Privacy Policy</span>
+              <span className={styles.staticLink}>Terms of Service</span>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="footer__bottom">
-          <div className="footer__bottom-bar" />
+        <div className={styles.bottomSection}>
+          <p className={styles.copyright}>
+            © {new Date().getFullYear()} StudyGen. All rights reserved. Powered by Advanced AI & Spring Boot.
+          </p>
+          <div className={styles.socials}>
+            <span className={styles.socialIcon}>🌐</span>
+            <span className={styles.socialIcon}>💻</span>
+            <span className={styles.socialIcon}>🚀</span>
+          </div>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

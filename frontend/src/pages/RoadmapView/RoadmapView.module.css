@@ -1,0 +1,416 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.archivedView {
+  opacity: 0.9;
+}
+
+/* What Changed Banner */
+.whatChangedBanner {
+  background-color: var(--color-primary-50);
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.5rem;
+}
+
+.whatChangedContent h4 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.whatChangedContent p {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin: 0 0 0.75rem 0;
+}
+
+.parentLink {
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: underline;
+  margin-left: 0.5rem;
+}
+
+.changedChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.keptChip {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-radius: var(--radius-full);
+}
+
+.removedChip {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-radius: var(--radius-full);
+}
+
+/* Draft Banner */
+.draftBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background-color: var(--color-secondary-50);
+  border-left: 5px solid var(--color-secondary);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.draftTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.draftBadge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--color-secondary);
+  letter-spacing: 0.05em;
+}
+
+.draftTextGroup h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.draftTextGroup p {
+  font-size: 0.9rem;
+  color: var(--color-neutral-600);
+  margin: 0;
+}
+
+.draftActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Archived Banner */
+.archivedBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-neutral-100);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-neutral-700);
+}
+
+/* Header Card */
+.roadmapHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.75rem;
+}
+
+.headerTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.editPencil {
+  font-size: 1rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.title:hover .editPencil {
+  opacity: 1;
+}
+
+.titleInlineInput {
+  font-family: inherit;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: 0.2rem 0.6rem;
+}
+
+.subtitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.targetRole {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-neutral-600);
+}
+
+.styleTag {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
+/* Menu Dropdown */
+.menuWrapper {
+  position: relative;
+}
+
+.menuTriggerBtn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  color: var(--color-neutral-600);
+  transition: all 0.15s;
+}
+
+.menuTriggerBtn:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-text);
+}
+
+.dropdownMenu {
+  position: absolute;
+  right: 0;
+  top: 2.2rem;
+  z-index: 50;
+  width: 200px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 0.4rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdownItem {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-neutral-700);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dropdownItem:hover {
+  background-color: var(--color-neutral-100);
+}
+
+.dangerItem {
+  color: var(--color-error);
+}
+
+.dangerItem:hover {
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+.dropdownDivider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0.3rem 0;
+}
+
+/* Stats Row */
+.headerStatsRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.progressCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progressTextRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--color-neutral-600);
+}
+
+.progressPercent {
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.timeStatsCol {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1rem;
+  background-color: var(--color-neutral-50);
+  border-radius: var(--radius-xl);
+  padding: 0.75rem 1rem;
+}
+
+.timeItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-neutral-500);
+}
+
+.timeValue {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+/* Roadmap Complete Banner */
+.completeBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+}
+
+.completeContent h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.completeContent p {
+  font-size: 0.9rem;
+  color: var(--color-neutral-600);
+  margin: 0;
+}
+
+.completeActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* View Tabs */
+.tabsRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.buttonGroup {
+  display: flex;
+  background-color: var(--color-neutral-100);
+  padding: 0.25rem;
+  border-radius: var(--radius-xl);
+  gap: 0.25rem;
+}
+
+.tabBtn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-neutral-600);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.tabActive {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Modules List */
+.modulesListCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.emptyCard {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-neutral-500);
+}
+
+@media (max-width: 868px) {
+  .draftBanner, .completeBanner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerStatsRow {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .timeStatsCol {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

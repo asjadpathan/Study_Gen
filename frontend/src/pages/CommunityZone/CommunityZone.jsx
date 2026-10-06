@@ -1,20 +1,9 @@
-﻿import './CommunityZone.css'
-import ChannelSidebar from './components/ChannelSidebar'
-import ChatWindow from './components/ChatWindow'
-import PostThread from './components/PostThread'
+import Community from '../Community';
 
 const CommunityZone = () => {
-  return (
-    <main className="">
-      <div className="__container">
-        <h1>Community Zone</h1>
-        <ChannelSidebar />
-        <ChatWindow />
-        <PostThread />
-      </div>
-    </main>
-  )
-}
+  return <Community />;
+};
 
-export default CommunityZone
+export default CommunityZone;
+
 
