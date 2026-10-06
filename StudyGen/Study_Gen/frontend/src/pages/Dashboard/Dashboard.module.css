@@ -1,0 +1,419 @@
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+.greetingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.greetingTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.025em;
+}
+
+.greetingSubtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+/* Dashboard Grid Layout */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.fullRow {
+  grid-column: 1 / -1;
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sectionHeaderTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* Stat Grid */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.25rem;
+}
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statIcon {
+  font-size: 1.25rem;
+}
+
+.statTitle {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.statSubtext {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+}
+
+/* Active Roadmaps Cards */
+.roadmapCardsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.roadmapCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.roadmapCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.roadmapTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.2rem;
+}
+
+.roadmapRole {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.progressTextRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.nextModuleBox {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.nextModuleLabel {
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.nextModuleTitle {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.continueRoadmapBtn {
+  align-self: flex-start;
+}
+
+/* Side Column Cards */
+.practiceDueCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+.practiceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.practiceTitleInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.practiceIcon {
+  font-size: 1.75rem;
+}
+
+.practiceTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.practiceSub {
+  font-size: 0.825rem;
+  color: var(--color-text-muted);
+}
+
+.dueBadge {
+  font-size: 0.9rem;
+  font-weight: 800;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+.practiceBtn {
+  width: 100%;
+}
+
+.quickActionsCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.quickActionsTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.actionButtonsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.shortcutBtn {
+  width: 100%;
+  justify-content: flex-start !important;
+}
+
+/* Quick Dropzone Card */
+.dropzoneCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.75rem;
+}
+
+.dropzoneTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.dropzoneSub {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.roadmapSelectWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.roadmapSelect {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  background-color: #ffffff;
+}
+
+.dropzone {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+  background-color: var(--color-bg);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  position: relative;
+}
+
+.dropzone:hover,
+.dropzoneActive {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-50);
+}
+
+.fileInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.dropzoneLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.cloudIcon {
+  font-size: 2.25rem;
+}
+
+.dropText {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.supportedText {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+/* Empty State Onboarding Card */
+.emptyOnboardingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  gap: 2rem;
+}
+
+.onboardingHeader {
+  max-width: 600px;
+}
+
+.onboardingIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.onboardingHeader h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.onboardingHeader p {
+  color: var(--color-text-muted);
+}
+
+.checklistGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.checkItem {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.checkBadge {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.checkItem h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.checkItem p {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.emptyActionWrapper {
+  margin-top: 0.5rem;
+}
+
+/* Responsive Rules below 768px */
+@media (max-width: 768px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .checklistGrid {
+    grid-template-columns: 1fr;
+  }
+}

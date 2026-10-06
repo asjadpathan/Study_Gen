@@ -1,0 +1,94 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+.stepWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  position: relative;
+  user-select: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover .stepLabel {
+  color: var(--color-primary);
+}
+
+.circle {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.completed .circle {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.current .circle {
+  background-color: #ffffff;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+.upcoming .circle {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid var(--color-border);
+}
+
+.labelWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.stepTitle {
+  font-size: 0.725rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.current .stepTitle {
+  color: var(--color-primary);
+}
+
+.stepLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.upcoming .stepLabel {
+  color: var(--color-text-muted);
+}
+
+.line {
+  width: 2px;
+  height: 1rem;
+  margin-left: 1.1rem;
+  background-color: var(--color-border);
+  transition: background-color var(--transition-normal);
+}
+
+.lineCompleted {
+  background-color: var(--color-primary);
+}

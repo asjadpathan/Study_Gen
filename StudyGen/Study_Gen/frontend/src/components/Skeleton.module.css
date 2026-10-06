@@ -1,0 +1,30 @@
+.skeleton {
+  background-color: #e2e8f0;
+  display: block;
+  animation: pulseOpacity 1.5s ease-in-out infinite;
+}
+
+.text {
+  margin-bottom: 0.5rem;
+}
+
+.circle {
+  flex-shrink: 0;
+}
+
+.rect {
+  display: block;
+}
+
+@keyframes pulseOpacity {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+    background-color: #cbd5e1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,717 @@
+/* Full-Screen Overlay (Renders outside AppShell Chrome) */
+.sessionOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #0b0f19;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+
+/* Top Navigation Bar */
+.sessionTopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.deckInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.deckLogo {
+  font-size: 1.25rem;
+  color: var(--color-primary-light);
+}
+
+.deckTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #e2e8f0;
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 240px;
+}
+
+.progressText {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.progressBarTrack {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary));
+  transition: width 0.3s ease;
+  border-radius: var(--radius-full);
+}
+
+.exitBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.exitBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Stage & Centered Flashcard with 3D Flip */
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+}
+
+.cardPerspective {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 680px;
+  height: 420px;
+  cursor: pointer;
+}
+
+.flashcard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.cardPerspective.isFlipped .flashcard {
+  transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius-2xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.25rem;
+  background: #151d30;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
+}
+
+.cardBack {
+  transform: rotateY(180deg);
+  background: #172138;
+}
+
+.cardHeaderStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.moduleBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: rgba(79, 70, 229, 0.2);
+  color: var(--color-primary-light);
+  border: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+.sideBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.sideBadgeAnswer {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #10b981;
+  text-transform: uppercase;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.25rem;
+  flex: 1;
+  padding: 1rem 0;
+}
+
+.frontText {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.35;
+  max-width: 580px;
+}
+
+.cardFooterHint {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.cardFooterHint strong {
+  color: #94a3b8;
+}
+
+/* Hint Accordion */
+.hintWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.hintToggleBtn {
+  background: transparent;
+  border: none;
+  color: #a78bfa;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease;
+}
+
+.hintToggleBtn:hover {
+  background: rgba(167, 139, 250, 0.1);
+}
+
+.hintBox {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-lg);
+  max-width: 500px;
+  text-align: left;
+}
+
+.hintLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #c4b5fd;
+  margin-right: 0.4rem;
+}
+
+.hintBody {
+  display: inline;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+/* Card Back specifics */
+.promptReminder {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.75rem;
+  width: 100%;
+  text-align: left;
+}
+
+.backMarkdown {
+  text-align: left;
+  font-size: 1.1rem;
+  line-height: 1.65;
+  color: #f1f5f9;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.backMarkdown p {
+  margin-bottom: 0.75rem;
+}
+
+.backList {
+  margin: 0.5rem 0 0.75rem 1.25rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.backList li {
+  color: #e2e8f0;
+}
+
+.analogyReminder {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: #fde68a;
+  text-align: left;
+  width: 100%;
+}
+
+.flipBackBar {
+  display: flex;
+  justify-content: center;
+}
+
+.flipBackBtn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.flipBackBtn:hover {
+  color: #94a3b8;
+}
+
+/* Bottom Action Bar */
+.actionBar {
+  padding: 1.25rem 2rem 1.75rem;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.unflippedActions {
+  display: flex;
+  justify-content: center;
+}
+
+.showAnswerBtn {
+  min-width: 260px;
+  padding: 0.9rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.5);
+}
+
+.showAnswerBtn span {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-left: 0.4rem;
+}
+
+/* 6 Rating Buttons (SM-2 Quality 0-5) */
+.ratingActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ratingPrompt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ratingButtonsGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.ratingBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0.5rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--rating-color);
+  color: #f8fafc;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ratingBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--rating-color);
+  opacity: 0.08;
+  transition: opacity var(--transition-fast);
+}
+
+.ratingBtn:hover::before {
+  opacity: 0.25;
+}
+
+.ratingBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.4);
+}
+
+.rateKey {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--rating-color);
+  margin-bottom: 0.25rem;
+}
+
+.rateLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+  z-index: 1;
+}
+
+.rateDesc {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  line-height: 1.2;
+  z-index: 1;
+}
+
+/* Exit Confirmation Modal */
+.confirmBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1.5rem;
+}
+
+.confirmModal {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  max-width: 440px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-xl);
+}
+
+.confirmTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.confirmText {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Session Summary View */
+.summaryContainer {
+  max-width: 720px;
+  width: 100%;
+  margin: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.summaryHeader {
+  text-align: center;
+}
+
+.summaryTrophy {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.summaryTitle {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+}
+
+.summarySubtitle {
+  color: #94a3b8;
+  font-size: 1.05rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.statCard {
+  background: #151d30;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem 1rem;
+  border-radius: var(--radius-xl);
+  text-align: center;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-primary-light);
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.activityBanner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-lg);
+  background: rgba(234, 88, 12, 0.12);
+  border: 1px solid rgba(234, 88, 12, 0.25);
+}
+
+.activityFire {
+  font-size: 2rem;
+}
+
+.activityTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fdba74;
+}
+
+.activitySub {
+  font-size: 0.85rem;
+  color: #fed7aa;
+}
+
+.dueDatesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dueDatesHeading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.dueDatesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dueDateRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background: #151d30;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dueCardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dueCardModule {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.dueCardFront {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.dueCardBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.qualityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.summaryFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.primarySummaryBtn {
+  min-width: 200px;
+}
+
+/* Loading & Error States */
+.centerLoading,
+.errorContainer {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  padding: 2rem;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-primary-light);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingText {
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+.errorIcon {
+  font-size: 3rem;
+}
+
+.errorHeading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.errorDesc {
+  color: #94a3b8;
+  max-width: 440px;
+}
+
+.errorActions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ratingButtonsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cardPerspective {
+    height: 360px;
+  }
+
+  .frontText {
+    font-size: 1.35rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}

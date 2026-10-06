@@ -1,0 +1,80 @@
+.fixedBanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background-color: #fffbeb;
+  border-bottom: 2px solid #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 2px 0;
+}
+
+.message {
+  font-size: 0.8125rem;
+  color: #b45309;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.countdownBadge {
+  background: #fef3c7;
+  color: #b45309;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid #fde68a;
+  margin-left: 4px;
+}
+
+.dismissBtn {
+  background: transparent;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  border-radius: var(--radius-md, 6px);
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dismissBtn:hover {
+  background: #fde68a;
+  color: #78350f;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

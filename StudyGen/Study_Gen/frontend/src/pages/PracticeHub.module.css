@@ -1,0 +1,433 @@
+.hubContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  width: 100%;
+}
+
+.pageHeader {
+  margin-bottom: 1rem;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.pageSubtitle {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  max-width: 680px;
+}
+
+/* Header Strip */
+.headerStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2.25rem 2.5rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-primary-50) 100%);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.headerStrip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 700px;
+}
+
+.metaBadges {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hubTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(79, 70, 229, 0.1);
+  color: var(--color-primary);
+}
+
+.streakBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #ffedd5;
+  box-shadow: var(--shadow-sm);
+}
+
+.dueTitle {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.dueSubtitle {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.startBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 2rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.startBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px -6px rgba(79, 70, 229, 0.5);
+}
+
+/* Layout */
+.mainLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.scheduleCard,
+.breakdownCard {
+  padding: 2rem;
+  border-radius: var(--radius-xl);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.sectionSubtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+.totalDeckBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+/* Upcoming 7-day Schedule Strip */
+.scheduleStrip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.85rem;
+}
+
+.scheduleCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem 0.75rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  text-align: center;
+}
+
+.scheduleCol:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-hover);
+}
+
+.todayCol {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary), var(--shadow-sm);
+}
+
+.colDay {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.todayCol .colDay {
+  color: var(--color-primary);
+}
+
+.colDate {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.colCount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.countBadgeHighlight {
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.countBadgeZero {
+  background: var(--color-surface);
+  color: var(--color-text-light);
+  border: 1px dashed var(--color-border);
+}
+
+.colLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* Breakdown List */
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.breakdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.breakdownItem:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border-hover);
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.itemBreadcrumb {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.itemModuleTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.dueItemBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+}
+
+/* Caught Up State */
+.allCaughtUpBox {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+}
+
+.caughtUpIcon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.caughtUpTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #166534;
+  margin-bottom: 0.25rem;
+}
+
+.caughtUpText {
+  font-size: 0.95rem;
+  color: #15803d;
+  line-height: 1.5;
+}
+
+/* Skeletons & Errors */
+.loadingSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.skeletonHeader {
+  height: 180px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-xl);
+}
+
+.skeletonGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.skeletonCard {
+  height: 150px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-xl);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.errorCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  gap: 1rem;
+}
+
+.errorIcon {
+  font-size: 2.5rem;
+}
+
+.errorTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.errorMsg {
+  color: var(--color-text-muted);
+  max-width: 480px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .scheduleStrip {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .headerStrip {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.75rem;
+  }
+
+  .scheduleStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .breakdownItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .itemActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

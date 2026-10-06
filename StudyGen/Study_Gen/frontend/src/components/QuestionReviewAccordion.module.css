@@ -1,0 +1,192 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.accordionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.itemCard {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s;
+}
+
+.correctCard {
+  border-left: 4px solid var(--color-success);
+}
+
+.incorrectCard {
+  border-left: 4px solid var(--color-danger);
+}
+
+.headerBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 1rem;
+}
+
+.headerBtn:hover {
+  background-color: var(--color-neutral-50);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.statusIcon {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.iconCorrect {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+}
+
+.iconIncorrect {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger);
+}
+
+.questionSummary {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.toggleArrow {
+  font-size: 0.75rem;
+  color: var(--color-neutral-400);
+}
+
+.body {
+  padding: 1rem 1.25rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--color-surface);
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+}
+
+.optionNormal {
+  background-color: var(--color-neutral-50);
+  color: var(--color-neutral-600);
+}
+
+.optionCorrect {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  font-weight: 700;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.optionWrong {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
+  font-weight: 600;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.letter {
+  font-weight: 800;
+  font-size: 0.8rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: var(--radius-sm);
+  background-color: rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.label {
+  flex: 1;
+}
+
+.badgeYourChoice {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm);
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger);
+}
+
+.badgeCorrect {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm);
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+}
+
+.explanationBox {
+  padding: 0.85rem 1rem;
+  background-color: var(--color-neutral-50);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--color-primary);
+}
+
+.explanationTitle {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.explanationText {
+  font-size: 0.85rem;
+  color: var(--color-neutral-700);
+  margin: 0;
+  line-height: 1.4;
+}
