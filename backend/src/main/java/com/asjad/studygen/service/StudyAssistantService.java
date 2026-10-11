@@ -1,5 +1,7 @@
 package com.asjad.studygen.service;
 
+import com.asjad.studygen.config.PromptRegistry;
+
 import com.asjad.studygen.dto.document.ChatMessageRequest;
 import com.asjad.studygen.dto.document.ChatMessageResponse;
 import com.asjad.studygen.entity.Concept;
@@ -26,6 +28,7 @@ public class StudyAssistantService {
     private final ConceptRepository conceptRepository;
     private final DocumentProcessingService documentService;
     private final ChatClient.Builder chatClientBuilder;
+    private final PromptRegistry promptRegistry;
 
     private ChatClient chatClient;
 
@@ -62,17 +65,7 @@ public class StudyAssistantService {
             }
         }
 
-        String prompt = """
-                You are StudyGen AI Tutor, an adaptive, encouraging, and brilliant computer science & engineering tutor.
-                Answer the student's question clearly with helpful analogies, practical examples, or code snippets when helpful.
-                Ground your answer in the provided context if applicable.
-
-                Context:
-                %s
-
-                Student Question:
-                %s
-                """.formatted(context.toString(), request.message());
+        String prompt = promptRegistry.studyAssistantTutorReply(context.toString(), request.message());
 
         String aiReply = chatClient.prompt()
                 .user(prompt)

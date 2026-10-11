@@ -1,5 +1,6 @@
 package com.asjad.studygen.service;
 
+import com.asjad.studygen.config.PromptRegistry;
 import com.asjad.studygen.dto.ai.AiQuizQuestion;
 import com.asjad.studygen.dto.ai.AiQuizSuggestion;
 import com.asjad.studygen.dto.assessment.*;
@@ -28,6 +29,7 @@ public class AssessmentService {
     private final ModuleRepository moduleRepository;
     private final UserAssessmentAttemptRepository attemptRepository;
     private final ChatClient.Builder chatClientBuilder;
+    private final PromptRegistry promptRegistry;
 
     private ChatClient chatClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -39,15 +41,7 @@ public class AssessmentService {
 
     @Transactional
     public AssessmentResponse generateDiagnosticQuiz(User user, DiagnosticQuizRequest request) {
-        String prompt = """
-                Generate a 5-question baseline diagnostic quiz to assess a student's starting knowledge.
-                Target topic: %s
-                Claimed prerequisites: %s
-
-                For each question, provide 4 multiple-choice options, specify the 0-based index of the correct answer,
-                and provide a short explanation.
-                IMPORTANT: Return ONLY raw valid JSON. Do NOT wrap the response in ```json``` markdown tags.
-                """.formatted(request.topic(), request.claimedPrerequisites());
+        String prompt = promptRegistry.assessmentDiagnosticQuiz(request.topic(), request.claimedPrerequisites());
 
         AiQuizSuggestion suggestion;
         try {
@@ -79,15 +73,7 @@ public class AssessmentService {
             return mapToResponse(existing.get());
         }
 
-        String prompt = """
-                Generate a 5-question mastery assessment for the following learning module.
-                Module title: %s
-                Module description: %s
-
-                Create challenging multiple-choice questions assessing understanding of key concepts.
-                Provide 4 options per question, the 0-based correct answer index, and an explanation.
-                IMPORTANT: Return ONLY raw valid JSON. Do NOT wrap the response in ```json``` markdown tags.
-                """.formatted(module.getTitle(), module.getDescription());
+        String prompt = promptRegistry.assessmentModuleQuiz(module.getTitle(), module.getDescription());
 
         AiQuizSuggestion suggestion;
         try {

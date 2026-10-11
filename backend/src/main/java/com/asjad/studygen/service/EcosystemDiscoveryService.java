@@ -1,5 +1,7 @@
 package com.asjad.studygen.service;
 
+import com.asjad.studygen.config.PromptRegistry;
+
 import com.asjad.studygen.entity.Roadmap;
 import com.asjad.studygen.entity.User;
 import com.asjad.studygen.repository.RoadmapRepository;
@@ -19,6 +21,7 @@ public class EcosystemDiscoveryService {
 
     private final RoadmapRepository roadmapRepository;
     private final ChatClient.Builder chatClientBuilder;
+    private final PromptRegistry promptRegistry;
 
     private ChatClient chatClient;
 
@@ -66,23 +69,7 @@ public class EcosystemDiscoveryService {
             }
         }
 
-        String prompt = """
-                You are a helpful assistant that curates educational and career resources.
-                For the topic "%s", find and return resources in 4 categories.
-                
-                For each category, provide 2-4 items. Each item must have:
-                - title: A descriptive title
-                - description: A short 1-2 sentence description
-                - url: A valid, real URL where this resource can be found
-                
-                Categories:
-                1. learningResources — Articles, courses, tutorials, videos
-                2. competitions — Hackathons, coding challenges, contests
-                3. news — Recent articles, journals, industry news
-                4. jobs — Career opportunities, job listings
-                
-                IMPORTANT: Return ONLY raw valid JSON. Do NOT wrap the response in ```json``` markdown tags.
-                """.formatted(topic);
+        String prompt = promptRegistry.ecosystemDiscover(topic);
 
         try {
             AiResourceDiscovery aiResult = chatClient.prompt()

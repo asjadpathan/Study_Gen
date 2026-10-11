@@ -1,5 +1,7 @@
 package com.asjad.studygen.service;
 
+import com.asjad.studygen.config.PromptRegistry;
+
 import com.asjad.studygen.dto.ai.AiQuizQuestion;
 import com.asjad.studygen.dto.ai.AiRemediationSuggestion;
 import com.asjad.studygen.dto.assessment.QuestionResponse;
@@ -28,6 +30,7 @@ public class RemediationService {
     private final com.asjad.studygen.repository.ModuleRepository moduleRepository;
     private final com.asjad.studygen.repository.AssessmentRepository assessmentRepository;
     private final ChatClient.Builder chatClientBuilder;
+    private final PromptRegistry promptRegistry;
 
     private ChatClient chatClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -66,16 +69,7 @@ public class RemediationService {
             }
         }
 
-        String prompt = """
-                A student failed an assessment titled "%s" with a score of %d%%.
-                Here are the concepts and questions they missed:
-                %s
-
-                Analyze the student's conceptual gaps and provide:
-                1. A diagnosis of where their mental model failed.
-                2. A simplified, intuitive explanation using analogies or real-world mental models.
-                3. Exactly 3 targeted re-test questions to verify if they now understand the core concepts.
-                """.formatted(
+        String prompt = promptRegistry.remediationGapAnalysis(
                 assessment.getTitle(),
                 attempt.getScore(),
                 missedQuestionsSummary.toString()

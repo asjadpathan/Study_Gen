@@ -1,5 +1,6 @@
 package com.asjad.studygen.service;
 
+import com.asjad.studygen.config.PromptRegistry;
 import com.asjad.studygen.dto.chat.*;
 import com.asjad.studygen.entity.*;
 import com.asjad.studygen.entity.Module;
@@ -36,6 +37,7 @@ public class ChatSessionService {
     private final DocumentProcessingService documentService;
     private final UserActivityService userActivityService;
     private final ChatClient.Builder chatClientBuilder;
+    private final PromptRegistry promptRegistry;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${spring.ai.google.genai.api-key:}")
@@ -285,23 +287,7 @@ public class ChatSessionService {
             }
         } catch (Exception ignored) {}
 
-        String prompt = """
-                You are StudyGen AI Tutor, a friendly, encouraging, and crystal-clear computer science and programming tutor.
-                Provide a direct, beginner-friendly, and comprehensive answer to the student's question.
-                
-                Guidelines:
-                - Give a clear, straightforward 1-2 sentence definition or explanation first.
-                - Break down key features, core concepts, or rules using clear bullet points.
-                - Include a practical, simple code example in the language or topic asked (e.g. Java for Java questions, Python for Python questions, etc.).
-                - Mention common use-cases or practical tips.
-                - Avoid generic corporate architecture jargon. Be direct and specific to their question.
-                - Format your answer with clean Markdown (### headings, bullet lists, `inline code`, and ```code blocks).
-                
-                %s
-                
-                Student Question:
-                %s
-                """.formatted(context.length() > 0 ? "Context:\n" + context : "", query);
+        String prompt = promptRegistry.chatSessionTutorReply(context.toString(), query);
 
         // 1. First attempt: Direct call to Gemini 3.6 Flash
         String geminiReply = callGeminiDirectly(prompt);

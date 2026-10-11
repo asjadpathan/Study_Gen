@@ -1,5 +1,7 @@
 package com.asjad.studygen.service;
 
+import com.asjad.studygen.config.PromptRegistry;
+
 import com.asjad.studygen.entity.JobPosting;
 import com.asjad.studygen.entity.Module;
 import com.asjad.studygen.entity.User;
@@ -34,7 +36,9 @@ public class CareerMatchingService {
     private final UserJobMatchRepository userJobMatchRepository;
     private final ModuleRepository moduleRepository;
     private final ChatClient.Builder chatClientBuilder;
+    private final PromptRegistry promptRegistry;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     public record JobMatchRequest(
             String jobTitle,
@@ -538,14 +542,7 @@ public class CareerMatchingService {
 
         try {
             ChatClient chatClient = chatClientBuilder.build();
-            String prompt = String.format("""
-                    Extract 5 to 8 key technical skills, tools, or frameworks required in this job description.
-                    Return ONLY a JSON array of strings, e.g. ["Java", "Docker", "Kubernetes", "PostgreSQL"].
-                    Do not include Markdown formatting or explanation.
-
-                    Job Title: %s
-                    Job Description: %s
-                    """, title, description);
+            String prompt = promptRegistry.careerExtractSkills(title, description);
 
             String response = chatClient.prompt(prompt).call().content();
             if (response != null) {

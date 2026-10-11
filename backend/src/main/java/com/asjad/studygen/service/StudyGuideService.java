@@ -1,5 +1,6 @@
 package com.asjad.studygen.service;
 
+import com.asjad.studygen.config.PromptRegistry;
 import com.asjad.studygen.dto.document.StudyGuideResponse;
 import com.asjad.studygen.entity.Concept;
 import com.asjad.studygen.entity.Module;
@@ -24,6 +25,7 @@ public class StudyGuideService {
     private final ModuleRepository moduleRepository;
     private final ConceptRepository conceptRepository;
     private final ChatClient.Builder chatClientBuilder;
+    private final PromptRegistry promptRegistry;
 
     private ChatClient chatClient;
 
@@ -48,20 +50,8 @@ public class StudyGuideService {
             }
         }
 
-        String prompt = """
-                Generate a comprehensive, beautifully structured Markdown study guide for the learning module: "%s".
-                Description: %s
-
-                Module Content:
-                %s
-
-                Include:
-                1. Executive Summary & Core Objectives
-                2. In-depth Concept Breakdowns with clear headings and bullet points
-                3. Code/Practical Architecture Examples (if applicable)
-                4. Common Pitfalls & Mistakes to Avoid
-                5. Quick Review Checklist
-                """.formatted(module.getTitle(), module.getDescription(), conceptsInfo.toString());
+        String prompt = promptRegistry.studyGuideGenerate(
+                module.getTitle(), module.getDescription(), conceptsInfo.toString());
 
         String markdownContent = null;
         try {
