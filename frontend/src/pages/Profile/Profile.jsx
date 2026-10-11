@@ -55,6 +55,183 @@ const BADGES_CATALOG = [
   },
 ];
 
+// Helper for Initials
+const getInitials = (name) => {
+  if (!name) return 'SG';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
+const DEFAULT_RADAR_DATA = [
+  { axis: 'Frontend', score: 20 },
+  { axis: 'Backend', score: 20 },
+  { axis: 'Database', score: 20 },
+  { axis: 'Cloud & DevOps', score: 20 },
+  { axis: 'Architecture', score: 20 },
+  { axis: 'Algorithms', score: 20 },
+];
+
+// Memoized SVG Radar Chart component
+const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
+  const radarData = data && data.length > 0 ? data : DEFAULT_RADAR_DATA;
+  const viewBoxWidth = 360;
+  const viewBoxHeight = 310;
+  const centerX = viewBoxWidth / 2; // 180
+  const centerY = viewBoxHeight / 2; // 155
+  const radius = 80;
+  const totalAxes = radarData.length;
+
+  const getCoordinates = (index, pct) => {
+    const angle = (index * 2 * Math.PI) / totalAxes - Math.PI / 2;
+    const r = radius * pct;
+    return {
+      x: centerX + r * Math.cos(angle),
+      y: centerY + r * Math.sin(angle),
+    };
+  };
+
+  const rings = [0.25, 0.5, 0.75, 1.0];
+
+  const dataPoints = radarData.map((d, i) => {
+    const scorePct = Math.max(0.15, Math.min(1.0, (d.score || 0) / 100));
+    return getCoordinates(i, scorePct);
+  });
+  const polygonPointsString = dataPoints.map((p) => `${p.x},${p.y}`).join(' ');
+
+  return (
+    <div className={styles.radarWrapper}>
+      <svg
+        viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+        className={styles.radarSvg}
+      >
+        {/* Concentric Grid Rings */}
+        {rings.map((ring, idx) => {
+          const ringPoints = Array.from({ length: totalAxes }, (_, i) => {
+            const p = getCoordinates(i, ring);
+            return `${p.x},${p.y}`;
+          }).join(' ');
+
+          return (
+            <polygon
+              key={idx}
+              points={ringPoints}
+              fill={idx === rings.length - 1 ? '#f8fafc' : 'transparent'}
+              stroke="#e2e8f0"
+              strokeWidth="1"
+              strokeDasharray={idx < 3 ? '3 3' : 'none'}
+            />
+          );
+        })}
+
+        {/* Radial Axis Lines */}
+        {Array.from({ length: totalAxes }, (_, i) => {
+          const outer = getCoordinates(i, 1.0);
+          return (
+            <line
+              key={i}
+              x1={centerX}
+              y1={centerY}
+              x2={outer.x}
+              y2={outer.y}
+              stroke="#cbd5e1"
+              strokeWidth="1"
+            />
+          );
+        })}
+
+        {/* Filled Data Polygon */}
+        <polygon
+          points={polygonPointsString}
+          fill="rgba(59, 130, 246, 0.2)"
+          stroke="var(--color-primary, #3b82f6)"
+          strokeWidth="2.5"
+          className={styles.radarPolygon}
+        />
+
+        {/* Vertex Circles and Values */}
+        {dataPoints.map((p, i) => (
+          <circle
+            key={radarData[i]?.axis || i}
+            cx={p.x}
+            cy={p.y}
+            r="4.5"
+            fill="#ffffff"
+            stroke="var(--color-primary, #3b82f6)"
+            strokeWidth="2.5"
+            className={styles.radarVertex}
+          >
+            <title>{`${radarData[i].axis}: ${radarData[i].score}%`}</title>
+          </circle>
+        ))}
+
+        {/* Axis Labels with dynamic anchoring to prevent clipping */}
+        {radarData.map((d, i) => {
+          let labelPos;
+          let anchor = 'middle';
+          let dy = 4;
+
+          if (i === 0) {
+            labelPos = getCoordinates(i, 1.28);
+            anchor = 'middle';
+            dy = -4;
+          } else if (i === 1) {
+            labelPos = getCoordinates(i, 1.22);
+            anchor = 'start';
+            dy = 3;
+          } else if (i === 2) {
+            labelPos = getCoordinates(i, 1.22);
+            anchor = 'start';
+            dy = 6;
+          } else if (i === 3) {
+            labelPos = getCoordinates(i, 1.28);
+            anchor = 'middle';
+            dy = 14;
+          } else if (i === 4) {
+            labelPos = getCoordinates(i, 1.22);
+            anchor = 'end';
+            dy = 6;
+          } else {
+            labelPos = getCoordinates(i, 1.22);
+            anchor = 'end';
+            dy = 3;
+          }
+
+          return (
+            <text
+              key={d.axis || i}
+              x={labelPos.x}
+              y={labelPos.y + dy}
+              textAnchor={anchor}
+              className={styles.radarLabel}
+            >
+              {d.axis}
+            </text>
+          );
+        })}
+      </svg>
+
+      {/* Domain Skill Progress Breakdown */}
+      <div className={styles.skillListGrid}>
+        {radarData.map((d) => (
+          <div key={d.axis} className={styles.skillItem}>
+            <div className={styles.skillHeader}>
+              <span className={styles.skillName}>{d.axis}</span>
+              <span className={styles.skillScore}>{d.score}%</span>
+            </div>
+            <div className={styles.skillProgressBar}>
+              <div
+                className={styles.skillProgressFill}
+                style={{ width: `${Math.min(100, Math.max(8, d.score))}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+});
+
 export default function Profile() {
   const { addToast } = useToast();
 
@@ -127,184 +304,7 @@ export default function Profile() {
     }
   };
 
-  // Helper for Initials
-  const getInitials = (name) => {
-    if (!name) return 'SG';
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
 
-  // SVG Radar Chart calculations
-  const renderSkillMatrixRadar = () => {
-    const radarData = profile?.skillsRadar || [
-      { axis: 'Frontend', score: 20 },
-      { axis: 'Backend', score: 20 },
-      { axis: 'Database', score: 20 },
-      { axis: 'Cloud & DevOps', score: 20 },
-      { axis: 'Architecture', score: 20 },
-      { axis: 'Algorithms', score: 20 },
-    ];
-
-    const viewBoxWidth = 360;
-    const viewBoxHeight = 310;
-    const centerX = viewBoxWidth / 2; // 180
-    const centerY = viewBoxHeight / 2; // 155
-    const radius = 80;
-    const totalAxes = radarData.length;
-
-    // Helper to calculate (x, y) for an axis at given percentage (0..1)
-    const getCoordinates = (index, pct) => {
-      const angle = (index * 2 * Math.PI) / totalAxes - Math.PI / 2;
-      const r = radius * pct;
-      return {
-        x: centerX + r * Math.cos(angle),
-        y: centerY + r * Math.sin(angle),
-      };
-    };
-
-    // Concentric Web Grid Polygons (25%, 50%, 75%, 100%)
-    const rings = [0.25, 0.5, 0.75, 1.0];
-
-    // Data polygon points
-    const dataPoints = radarData.map((d, i) => {
-      const scorePct = Math.max(0.15, Math.min(1.0, (d.score || 0) / 100));
-      return getCoordinates(i, scorePct);
-    });
-    const polygonPointsString = dataPoints.map((p) => `${p.x},${p.y}`).join(' ');
-
-    return (
-      <div className={styles.radarWrapper}>
-        <svg
-          viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-          className={styles.radarSvg}
-        >
-          {/* Concentric Grid Rings */}
-          {rings.map((ring, idx) => {
-            const ringPoints = Array.from({ length: totalAxes }, (_, i) => {
-              const p = getCoordinates(i, ring);
-              return `${p.x},${p.y}`;
-            }).join(' ');
-
-            return (
-              <polygon
-                key={idx}
-                points={ringPoints}
-                fill={idx === rings.length - 1 ? '#f8fafc' : 'transparent'}
-                stroke="#e2e8f0"
-                strokeWidth="1"
-                strokeDasharray={idx < 3 ? '3 3' : 'none'}
-              />
-            );
-          })}
-
-          {/* Radial Axis Lines */}
-          {Array.from({ length: totalAxes }, (_, i) => {
-            const outer = getCoordinates(i, 1.0);
-            return (
-              <line
-                key={i}
-                x1={centerX}
-                y1={centerY}
-                x2={outer.x}
-                y2={outer.y}
-                stroke="#cbd5e1"
-                strokeWidth="1"
-              />
-            );
-          })}
-
-          {/* Filled Data Polygon */}
-          <polygon
-            points={polygonPointsString}
-            fill="rgba(59, 130, 246, 0.2)"
-            stroke="var(--color-primary, #3b82f6)"
-            strokeWidth="2.5"
-            className={styles.radarPolygon}
-          />
-
-          {/* Vertex Circles and Values */}
-          {dataPoints.map((p, i) => (
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r="4.5"
-              fill="#ffffff"
-              stroke="var(--color-primary, #3b82f6)"
-              strokeWidth="2.5"
-              className={styles.radarVertex}
-            >
-              <title>{`${radarData[i].axis}: ${radarData[i].score}%`}</title>
-            </circle>
-          ))}
-
-          {/* Axis Labels with dynamic anchoring to prevent clipping */}
-          {radarData.map((d, i) => {
-            let labelPos;
-            let anchor = 'middle';
-            let dy = 4;
-
-            if (i === 0) {
-              labelPos = getCoordinates(i, 1.28);
-              anchor = 'middle';
-              dy = -4;
-            } else if (i === 1) {
-              labelPos = getCoordinates(i, 1.22);
-              anchor = 'start';
-              dy = 3;
-            } else if (i === 2) {
-              labelPos = getCoordinates(i, 1.22);
-              anchor = 'start';
-              dy = 6;
-            } else if (i === 3) {
-              labelPos = getCoordinates(i, 1.28);
-              anchor = 'middle';
-              dy = 14;
-            } else if (i === 4) {
-              labelPos = getCoordinates(i, 1.22);
-              anchor = 'end';
-              dy = 6;
-            } else {
-              labelPos = getCoordinates(i, 1.22);
-              anchor = 'end';
-              dy = 3;
-            }
-
-            return (
-              <text
-                key={i}
-                x={labelPos.x}
-                y={labelPos.y + dy}
-                textAnchor={anchor}
-                className={styles.radarLabel}
-              >
-                {d.axis}
-              </text>
-            );
-          })}
-        </svg>
-
-        {/* Domain Skill Progress Breakdown */}
-        <div className={styles.skillListGrid}>
-          {radarData.map((d, i) => (
-            <div key={i} className={styles.skillItem}>
-              <div className={styles.skillHeader}>
-                <span className={styles.skillName}>{d.axis}</span>
-                <span className={styles.skillScore}>{d.score}%</span>
-              </div>
-              <div className={styles.skillProgressBar}>
-                <div
-                  className={styles.skillProgressFill}
-                  style={{ width: `${Math.min(100, Math.max(8, d.score))}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
 
   if (loading) {
     return (
@@ -556,7 +556,7 @@ export default function Profile() {
           </div>
 
           <div className={styles.radarCardBody}>
-            {renderSkillMatrixRadar()}
+            <SkillMatrixRadar data={profile?.skillsRadar} />
             <div className={styles.radarLegend}>
               <span className={styles.radarLegendDot}></span>
               <span>Active Competency Polygon (0% to 100% mastery scale)</span>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useToast } from '../../context/ToastContext';
 import EmptyState from '../../components/EmptyState';
 import styles from './Community.module.css';
 
@@ -131,6 +132,9 @@ const Community = () => {
   const [expandedComments, setExpandedComments] = useState({});
   const [commentDrafts, setCommentDrafts] = useState({});
 
+  const { addToast } = useToast();
+  const [deleteConfirmPostId, setDeleteConfirmPostId] = useState(null);
+
   // Chat Composer state
   const [chatDraft, setChatDraft] = useState('');
 
@@ -207,7 +211,7 @@ const Community = () => {
     }
 
     if (postDraft.length > 500) {
-      alert('Post exceeds 500 character limit.');
+      addToast('Post exceeds 500 characters', 'warning');
       return;
     }
 
@@ -236,17 +240,17 @@ const Community = () => {
 
   // Delete own post
   const handleDeletePost = (postId) => {
-    if (window.confirm('Are you sure you want to delete your post?')) {
-      setPostsByChannel((prev) => ({
-        ...prev,
-        [activeChannelId]: (prev[activeChannelId] || []).filter((p) => p.id !== postId),
-      }));
-    }
+    setPostsByChannel((prev) => ({
+      ...prev,
+      [activeChannelId]: (prev[activeChannelId] || []).filter((p) => p.id !== postId),
+    }));
+    setDeleteConfirmPostId(null);
+    addToast('Post deleted.', 'info');
   };
 
   // Report post
   const handleReportPost = (postId) => {
-    alert('Thank you for your report. Our community moderation team has been notified.');
+    addToast('Thank you for your report. Our community moderation team has been notified.', 'success');
   };
 
   // Toggle post like
@@ -572,13 +576,31 @@ const Community = () => {
                             {/* Actions: Delete Own / Report Others */}
                             <div className={styles.postCardActions}>
                               {post.isOwn ? (
-                                <button
-                                  className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                                  onClick={() => handleDeletePost(post.id)}
-                                  title="Delete your post"
-                                >
-                                  🗑️ Delete
-                                </button>
+                                deleteConfirmPostId === post.id ? (
+                                  <div className={styles.inlineDeleteConfirm}>
+                                    <span className={styles.confirmPrompt}>Delete?</span>
+                                    <button
+                                      className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                                      onClick={() => handleDeletePost(post.id)}
+                                    >
+                                      Yes
+                                    </button>
+                                    <button
+                                      className={styles.actionBtn}
+                                      onClick={() => setDeleteConfirmPostId(null)}
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                                    onClick={() => setDeleteConfirmPostId(post.id)}
+                                    title="Delete your post"
+                                  >
+                                    🗑️ Delete
+                                  </button>
+                                )
                               ) : (
                                 <button
                                   className={styles.actionBtn}
@@ -646,12 +668,13 @@ const Community = () => {
                                   className={styles.commentInput}
                                   placeholder="Write a constructive reply..."
                                   value={commentDrafts[post.id] || ''}
-                                  onChange={(e) =>
-                                    setCommentDrafts({
-                                      ...commentDrafts,
-                                      [post.id]: e.target.value,
-                                    })
-                                  }
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setCommentDrafts((prev) => ({
+                                      ...prev,
+                                      [post.id]: val,
+                                    }));
+                                  }}
                                   onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                       e.preventDefault();

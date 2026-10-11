@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
 import AIStageLoader from '../../components/AIStageLoader';
 import RateLimitBanner from '../../components/RateLimitBanner';
 import styles from './Career.module.css';
+
+const GAUGE_RADIUS = 54;
+const GAUGE_CIRCUMFERENCE = 2 * Math.PI * GAUGE_RADIUS;
 
 export default function Career() {
   const navigate = useNavigate();
@@ -140,9 +143,10 @@ export default function Career() {
 
   // Donut Gauge calculations
   const matchPercent = currentResult?.matchPercentage || 0;
-  const radius = 54;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (matchPercent / 100) * circumference;
+  const strokeDashoffset = useMemo(
+    () => GAUGE_CIRCUMFERENCE - (matchPercent / 100) * GAUGE_CIRCUMFERENCE,
+    [matchPercent]
+  );
 
   // Donut stroke color
   const getGaugeColor = (pct) => {
@@ -396,8 +400,8 @@ export default function Career() {
                   <div className={styles.responsibilitiesSection}>
                     <h4 className={styles.respHeading}>Key Responsibilities</h4>
                     <ul className={styles.respList}>
-                      {(currentResult.responsibilities || []).slice(0, 6).map((resp, idx) => (
-                        <li key={idx} className={styles.respItem}>
+                      {(currentResult.responsibilities || []).slice(0, 6).map((resp) => (
+                        <li key={resp} className={styles.respItem}>
                           <span className={styles.respBullet}>•</span>
                           <span>{resp}</span>
                         </li>

@@ -82,7 +82,7 @@ const GenerateRoadmap = () => {
         setCurrentStep(location.state.initialStep);
       }
     }
-  }, [location.state]);
+  }, [location.state, addToast]);
 
   // Step 2 Tag Input State
   const [skillInput, setSkillInput] = useState('');
@@ -282,7 +282,7 @@ const GenerateRoadmap = () => {
                     maxLength={200}
                     placeholder="e.g. Full-Stack Web Development, System Architecture, Quantum Physics"
                     value={formData.targetTopic}
-                    onChange={(e) => setFormData({ ...formData, targetTopic: e.target.value })}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, targetTopic: e.target.value }))}
                     className={styles.input}
                   />
                   <span className={styles.charCount}>
@@ -300,7 +300,7 @@ const GenerateRoadmap = () => {
                     maxLength={100}
                     placeholder="e.g. Senior Frontend Engineer, Data Scientist, Solutions Architect"
                     value={formData.targetRole}
-                    onChange={(e) => setFormData({ ...formData, targetRole: e.target.value })}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, targetRole: e.target.value }))}
                     className={styles.input}
                   />
                   <span className={styles.charCount}>
@@ -328,7 +328,7 @@ const GenerateRoadmap = () => {
                         className={`${styles.segmentBtn} ${
                           formData.selfLevel === lvl ? styles.segmentActive : ''
                         }`}
-                        onClick={() => setFormData({ ...formData, selfLevel: lvl })}
+                        onClick={() => setFormData((prev) => ({ ...prev, selfLevel: lvl }))}
                       >
                         {lvl}
                       </button>
@@ -390,7 +390,7 @@ const GenerateRoadmap = () => {
                     min={1}
                     max={80}
                     value={formData.hoursPerWeek}
-                    onChange={(e) => setFormData({ ...formData, hoursPerWeek: Number(e.target.value) })}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, hoursPerWeek: Number(e.target.value) }))}
                     className={styles.rangeSlider}
                   />
                 </div>
@@ -405,7 +405,7 @@ const GenerateRoadmap = () => {
                     min={1}
                     max={104}
                     value={formData.targetWeeks}
-                    onChange={(e) => setFormData({ ...formData, targetWeeks: Number(e.target.value) })}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, targetWeeks: Number(e.target.value) }))}
                     className={styles.rangeSlider}
                   />
                 </div>
@@ -432,7 +432,7 @@ const GenerateRoadmap = () => {
                       <div
                         key={style.id}
                         className={`${styles.styleCard} ${isSelected ? styles.styleCardSelected : ''}`}
-                        onClick={() => setFormData({ ...formData, learningStyle: style.id })}
+                        onClick={() => setFormData((prev) => ({ ...prev, learningStyle: style.id }))}
                       >
                         <span className={styles.styleIcon}>{style.icon}</span>
                         <h4 className={styles.styleTitle}>{style.title}</h4>

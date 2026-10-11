@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
@@ -166,28 +166,35 @@ const FEATURES = [
   }
 ];
 
+const hasToken = () => {
+  if (localStorage.getItem('token')) return true;
+  try {
+    const user = JSON.parse(localStorage.getItem('studygen_user') || '{}');
+    return Boolean(user?.token);
+  } catch {
+    return false;
+  }
+};
+
 const Landing = () => {
   const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    const hasToken = () => {
-      if (localStorage.getItem('token')) return true;
-      try {
-        const user = JSON.parse(localStorage.getItem('studygen_user') || '{}');
-        return Boolean(user?.token);
-      } catch {
-        return false;
-      }
-    };
-
     if (hasToken()) {
       navigate('/dashboard', { replace: true });
+      return;
     }
+    setAuthChecked(true);
   }, [navigate]);
 
   const scrollToHowItWorks = () => {
     document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  if (!authChecked) {
+    return null;
+  }
 
   return (
     <div className={styles.landingPage}>

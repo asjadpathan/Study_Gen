@@ -28,7 +28,7 @@ const Auth = () => {
   // Check for sessionExpired flag passed from location.state or URL query params
   const sessionExpired =
     location.state?.sessionExpired ||
-    new URLSearchParams(location.search).get('sessionExpired') === 'true';
+    searchParams.get('sessionExpired') === 'true';
   const redirectTo = location.state?.redirectTo || location.state?.from?.pathname || '/dashboard';
 
   const {

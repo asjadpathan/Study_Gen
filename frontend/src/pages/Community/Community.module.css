@@ -680,6 +680,19 @@
   color: #dc2626;
 }
 
+.inlineDeleteConfirm {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.confirmPrompt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin-right: 2px;
+}
+
 .postBody {
   font-size: 0.9375rem;
   line-height: 1.6;

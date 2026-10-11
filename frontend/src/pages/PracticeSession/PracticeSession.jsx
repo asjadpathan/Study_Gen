@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Button from '../../components/Button';
 import axiosInstance from '../../services/axiosInstance';
@@ -25,6 +25,7 @@ const PracticeSession = () => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
   const [sessionResults, setSessionResults] = useState([]);
   const [isFinished, setIsFinished] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -91,8 +92,9 @@ const PracticeSession = () => {
   // Rating action: submit SM-2 quality and advance
   const handleRate = useCallback(
     async (quality) => {
-      if (!currentCard || isSubmitting) return;
+      if (!currentCard || isSubmittingRef.current) return;
 
+      isSubmittingRef.current = true;
       setIsSubmitting(true);
       try {
         const payload = {
@@ -148,10 +150,11 @@ const PracticeSession = () => {
           setIsFinished(true);
         }
       } finally {
+        isSubmittingRef.current = false;
         setIsSubmitting(false);
       }
     },
-    [currentCard, currentIndex, cards.length, isSubmitting]
+    [currentCard, currentIndex, cards.length]
   );
 
   // Keyboard navigation
