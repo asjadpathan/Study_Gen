@@ -6,13 +6,13 @@ services:
     environment:
       POSTGRES_USER: ${DB_USERNAME:-user}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-StudyGen123}
-      POSTGRES_DB: studygen
+      POSTGRES_DB: ${DB_NAME:-studygen}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-user} -d studygen"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-user} -d ${DB_NAME:-studygen}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,11 +26,11 @@ services:
     env_file:
       - .env
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT:-8080}:8080"
     depends_on:
       postgres-db:
         condition: service_healthy
-    mem_limit: 768m
+    mem_limit: ${BACKEND_MEM_LIMIT:-768m}
 
   frontend:
     build:
@@ -39,10 +39,10 @@ services:
     container_name: studygen-frontend
     restart: always
     ports:
-      - "80:80"
-      - "443:443"
+      - "${FRONTEND_HTTP_PORT:-80}:80"
+      - "${FRONTEND_HTTPS_PORT:-443}:443"
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ${LETSENCRYPT_DIR:-/etc/letsencrypt}:/etc/letsencrypt:ro
     depends_on:
       - backend
 
