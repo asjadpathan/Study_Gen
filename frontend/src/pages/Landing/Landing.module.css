@@ -1,28 +1,44 @@
 .landingPage {
   width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #fafbfc;
+  color: #0f172a;
   overflow-x: hidden;
 }
 
-/* Common Section Header */
+/* ========================================
+   COMMON SECTION HEADERS
+   ======================================== */
 .sectionHeader {
   text-align: center;
-  max-width: 700px;
-  margin: 0 auto 3.5rem;
+  max-width: 640px;
+  margin: 0 auto 4rem;
+}
+
+.sectionTag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary, #4f46e5);
+  margin-bottom: 0.75rem;
 }
 
 .sectionTitle {
   font-size: 2.25rem;
-  font-weight: 800;
-  color: var(--color-text);
-  margin-bottom: 0.75rem;
+  font-weight: 700;
+  color: #0f172a;
   letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
 }
 
 .sectionSubtitle {
-  font-size: 1.1rem;
-  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  color: #64748b;
   line-height: 1.6;
 }
 
@@ -30,76 +46,80 @@
    1. HERO SECTION
    ======================================== */
 .heroSection {
-  padding: 6rem 1.5rem 5rem;
-  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08) 0%, rgba(248, 250, 252, 0) 70%);
+  padding: 7rem 1.5rem 5rem;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99, 102, 241, 0.12), transparent),
+    radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.5), transparent);
   display: flex;
   justify-content: center;
-  align-items: center;
-  text-align: center;
 }
 
 .heroContainer {
-  max-width: 900px;
+  max-width: 860px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .heroBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.375rem 1rem;
-  background-color: var(--color-primary-50);
-  border: 1px solid var(--color-primary-200);
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin-bottom: 1.75rem;
+  padding: 0.35rem 0.85rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #334155;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  margin-bottom: 2rem;
 }
 
 .badgePulse {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background-color: var(--color-primary);
-  box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
-  animation: pulse 2s infinite;
+  background-color: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
   }
+
   70% {
-    box-shadow: 0 0 0 8px rgba(79, 70, 229, 0);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
   }
+
   100% {
-    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
 }
 
 .heroTitle {
   font-size: 3.5rem;
-  line-height: 1.15;
+  line-height: 1.1;
   font-weight: 800;
-  color: var(--color-text);
-  margin-bottom: 1.25rem;
   letter-spacing: -0.035em;
+  color: #0f172a;
+  margin-bottom: 1.5rem;
 }
 
 .gradientText {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .heroSubtitle {
-  font-size: 1.25rem;
-  line-height: 1.65;
-  color: var(--color-text-muted);
-  max-width: 720px;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #475569;
+  max-width: 660px;
   margin-bottom: 2.5rem;
 }
 
@@ -110,45 +130,51 @@
   margin-bottom: 4rem;
 }
 
-.heroMetrics {
-  display: flex;
+.ctaButton {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 2.5rem;
+  gap: 0.5rem;
+}
+
+.heroMetrics {
+  display: inline-flex;
+  align-items: center;
+  gap: 3rem;
   padding: 1.25rem 2.5rem;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-md);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.05);
 }
 
 .metricItem {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.2rem;
 }
 
 .metricValue {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--color-primary);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 .metricLabel {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  color: #64748b;
   font-weight: 500;
 }
 
 .metricDivider {
   width: 1px;
-  height: 32px;
-  background-color: var(--color-border);
+  height: 28px;
+  background-color: #f1f5f9;
 }
 
 /* ========================================
-   2. HOW IT WORKS SECTION
+   2. HOW IT WORKS / STEPS
    ======================================== */
 .howItWorksSection {
   padding: 6rem 1.5rem;
@@ -157,126 +183,129 @@
   width: 100%;
 }
 
-.stepsContainer {
-  display: flex;
-  flex-direction: row;
-  gap: 1.5rem;
-  justify-content: space-between;
+.stepsRail {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
 }
 
 .stepCard {
-  flex: 1;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  padding: 1.75rem 1.25rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   position: relative;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-normal);
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .stepCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
 }
 
-.stepBadge {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-full);
-  background-color: var(--color-tertiary);
-  color: #ffffff;
-  font-family: var(--font-display);
-  font-size: 1.1rem;
+.stepHeader {
+  margin-bottom: 1rem;
+}
+
+.stepNumber {
+  font-size: 0.8rem;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+  color: var(--color-primary, #4f46e5);
+  background-color: #eef2ff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  display: inline-block;
 }
 
 .stepTitle {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
   margin-bottom: 0.5rem;
   line-height: 1.35;
 }
 
 .stepDescription {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-  line-height: 1.55;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
 }
 
 /* ========================================
-   3. FEATURES GRID SECTION
+   3. FEATURES GRID
    ======================================== */
 .featuresSection {
   padding: 6rem 1.5rem;
-  background-color: #f1f5f9;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .featuresGrid {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
 .featureCard {
+  background-color: #fafbfc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  height: 100%;
+  transition: all 0.2s ease;
+}
+
+.featureCard:hover {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
 }
 
 .iconCircle {
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: var(--radius-xl);
-  background-color: var(--color-primary-50);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: var(--color-primary, #4f46e5);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
   margin-bottom: 1.25rem;
-  border: 1px solid var(--color-primary-100);
 }
 
 .featureTitle {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin-bottom: 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
 }
 
 .featureDescription {
-  font-size: 0.925rem;
-  color: var(--color-text-muted);
-  line-height: 1.6;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.55;
 }
 
 /* ========================================
-   4. FINAL CTA BAND SECTION
+   4. FINAL CTA BAND
    ======================================== */
 .ctaBandSection {
   width: 100%;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
+  background-color: #0f172a;
   color: #ffffff;
-  padding: 5.5rem 1.5rem;
+  padding: 6rem 1.5rem;
   text-align: center;
 }
 
 .ctaBandContainer {
-  max-width: 800px;
+  max-width: 680px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -284,48 +313,40 @@
 }
 
 .ctaBandTitle {
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-size: 2.25rem;
+  font-weight: 700;
   color: #ffffff;
   margin-bottom: 1rem;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
 }
 
 .ctaBandSubtitle {
-  font-size: 1.15rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2.25rem;
-  line-height: 1.6;
-}
-
-.ctaBandAction {
-  display: flex;
-  justify-content: center;
+  font-size: 1.1rem;
+  color: #94a3b8;
+  margin-bottom: 2rem;
+  line-height: 1.5;
 }
 
 /* ========================================
-   RESPONSIVE MEDIA QUERIES
+   RESPONSIVE DESIGN
    ======================================== */
-
-/* Tablet & Mobile (<= 1024px) */
 @media (max-width: 1024px) {
   .heroTitle {
-    font-size: 2.85rem;
+    font-size: 2.75rem;
   }
-  
-  .stepsContainer {
-    gap: 1rem;
+
+  .stepsRail {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .featuresGrid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Mobile Devices (<= 768px) */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .heroSection {
-    padding: 4rem 1.25rem 3.5rem;
+    padding: 5rem 1rem 3.5rem;
   }
 
   .heroTitle {
@@ -333,53 +354,36 @@
   }
 
   .heroSubtitle {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .heroActions {
     flex-direction: column;
     width: 100%;
-    max-width: 320px;
+  }
+
+  .heroActions button {
+    width: 100%;
   }
 
   .heroMetrics {
     flex-direction: column;
     gap: 1.25rem;
-    padding: 1.5rem;
+    padding: 1.25rem;
     width: 100%;
   }
 
   .metricDivider {
-    width: 80%;
+    width: 60%;
     height: 1px;
   }
 
-  .howItWorksSection {
-    padding: 4rem 1.25rem;
-  }
-
-  .stepsContainer {
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .stepCard {
-    width: 100%;
-  }
-
-  .featuresSection {
-    padding: 4rem 1.25rem;
-  }
-
+  .stepsRail,
   .featuresGrid {
     grid-template-columns: 1fr;
   }
 
-  .ctaBandSection {
-    padding: 4rem 1.25rem;
-  }
-
   .ctaBandTitle {
-    font-size: 1.85rem;
+    font-size: 1.75rem;
   }
 }

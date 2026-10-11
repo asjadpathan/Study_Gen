@@ -8,7 +8,7 @@ import Card from '../../components/Card';
 import logoImg from '../../assets/images/logo.png';
 import styles from './Auth.module.css';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 const Auth = () => {
   const [searchParams, setSearchParams] = useSearchParams();
