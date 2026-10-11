@@ -11,7 +11,7 @@ const SUGGESTION_CHIPS = [
   'What are common architectural pitfalls in microservices?'
 ];
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = '/api';
 
 const ChatThread = ({
   sessionId,

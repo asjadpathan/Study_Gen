@@ -8,7 +8,7 @@ import Card from '../../components/Card';
 import logoImg from '../../assets/images/logo.png';
 import styles from './Auth.module.css';
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = '/api';
 
 const Auth = () => {
   const [searchParams, setSearchParams] = useSearchParams();

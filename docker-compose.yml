@@ -1,16 +1,50 @@
 services:
   postgres-db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: studygen-db
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: StudyGen123
+      POSTGRES_USER: ${DB_USERNAME:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-StudyGen123}
       POSTGRES_DB: studygen
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-user} -d studygen"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: studygen-backend
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    mem_limit: 768m
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: studygen-frontend
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
