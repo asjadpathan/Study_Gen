@@ -98,12 +98,14 @@ public class ActivityController {
 
     @GetMapping("/heatmap")
     public ResponseEntity<ActivityHeatmapResponse> getActivityHeatmap(
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal User user,
+            @RequestParam(name = "days", required = false, defaultValue = "180") Integer days) {
 
+        int daysBack = (days != null && days > 0) ? days : 180;
         User managedUser = userRepository.findById(user.getId()).orElse(user);
 
-        // 1. Get streak heatmap (last 60 days)
-        AnalyticsService.StreakHeatmapResponse streakData = analyticsService.getStreakHeatmap(user.getId(), 60);
+        // 1. Get streak heatmap (for requested days)
+        AnalyticsService.StreakHeatmapResponse streakData = analyticsService.getStreakHeatmap(user.getId(), daysBack);
 
         LocalDate today = LocalDate.now();
 
@@ -164,5 +166,19 @@ public class ActivityController {
                 weekDays,
                 streakData.heatmap()
         ));
+    }
+
+    public record StreakResponse(
+            int currentStreak,
+            int longestStreak
+    ) {}
+
+    @GetMapping("/streak")
+    public ResponseEntity<StreakResponse> getStreak(@AuthenticationPrincipal User user) {
+        User managedUser = userRepository.findById(user.getId()).orElse(user);
+        int currentStreak = managedUser.getCurrentStreak() != null ? managedUser.getCurrentStreak() : 0;
+        AnalyticsService.StreakHeatmapResponse streakData = analyticsService.getStreakHeatmap(user.getId(), 60);
+        int longestStreak = Math.max(currentStreak, streakData.longestStreak());
+        return ResponseEntity.ok(new StreakResponse(currentStreak, longestStreak));
     }
 }

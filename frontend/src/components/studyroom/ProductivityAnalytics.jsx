@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../services/axiosInstance';
+import { useAuth } from '../../context/AuthContext';
 import Heatmap from '../Heatmap';
 import styles from './ProductivityAnalytics.module.css';
 
 export default function ProductivityAnalytics({ refreshTrigger = 0 }) {
+  const { updateStreak } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [analytics, setAnalytics] = useState({
@@ -23,8 +25,11 @@ export default function ProductivityAnalytics({ refreshTrigger = 0 }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axiosInstance.get('/activity/heatmap');
+      const res = await axiosInstance.get('/activity/heatmap?days=60');
       setAnalytics(res.data);
+      if (typeof res.data?.currentStreak === 'number' && updateStreak) {
+        updateStreak(res.data.currentStreak, res.data.longestStreak);
+      }
     } catch (err) {
       console.error('Failed to load productivity analytics:', err);
       setError('Could not load productivity data.');

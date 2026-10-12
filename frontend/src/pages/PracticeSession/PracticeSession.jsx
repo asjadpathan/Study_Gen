@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Button from '../../components/Button';
 import axiosInstance from '../../services/axiosInstance';
+import { useAuth } from '../../context/AuthContext';
 import styles from './PracticeSession.module.css';
 
 const RATINGS = [
@@ -15,6 +16,7 @@ const RATINGS = [
 
 const PracticeSession = () => {
   const navigate = useNavigate();
+  const { refreshStreak } = useAuth();
   const [searchParams] = useSearchParams();
   const moduleIdParam = searchParams.get('moduleId');
 
@@ -127,6 +129,7 @@ const PracticeSession = () => {
           setCurrentIndex((prev) => prev + 1);
         } else {
           setIsFinished(true);
+          if (refreshStreak) refreshStreak();
         }
       } catch (err) {
         console.error('Failed to record card review:', err);
@@ -148,13 +151,18 @@ const PracticeSession = () => {
           setCurrentIndex((prev) => prev + 1);
         } else {
           setIsFinished(true);
+          if (refreshStreak) refreshStreak();
         }
       } finally {
         isSubmittingRef.current = false;
         setIsSubmitting(false);
       }
     },
+<<<<<<< HEAD
+    [currentCard, currentIndex, cards.length, isSubmitting, refreshStreak]
+=======
     [currentCard, currentIndex, cards.length]
+>>>>>>> 96aa42e4d15853928a3a4f19121281fba7b9eb24
   );
 
   // Keyboard navigation

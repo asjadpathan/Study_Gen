@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import axiosInstance from '../services/axiosInstance';
 import styles from './TopBar.module.css';
 
@@ -20,7 +21,8 @@ const pageTitleMap = {
 const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, refreshStreak } = useAuth();
+  const { theme, isDark, toggleTheme } = useTheme();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [flashcardsDue, setFlashcardsDue] = useState(0);
@@ -29,9 +31,12 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
   const currentPath = location.pathname;
   const pageTitle = customTitle || pageTitleMap[currentPath] || 'StudyGen';
 
-  // Fetch flashcards due count on mount
+  // Fetch authentic streak & flashcards due count on mount
   useEffect(() => {
     let isMounted = true;
+    if (refreshStreak) {
+      refreshStreak();
+    }
     axiosInstance
       .get('/practice/due')
       .then((res) => {
@@ -41,13 +46,13 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
       })
       .catch(() => {
         // Fallback default due count if endpoint not yet populated
-        if (isMounted) setFlashcardsDue(5);
+        if (isMounted) setFlashcardsDue(0);
       });
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [refreshStreak]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -66,8 +71,8 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
     navigate('/auth');
   };
 
-  const streakCount = user?.currentStreak !== undefined ? user.currentStreak : 3;
-  const longestStreak = user?.longestStreak !== undefined ? user.longestStreak : streakCount + 2;
+  const streakCount = typeof user?.currentStreak === 'number' ? user.currentStreak : 0;
+  const longestStreak = typeof user?.longestStreak === 'number' ? user.longestStreak : streakCount;
   const userInitials = user?.fullName
     ? user.fullName
         .split(' ')
@@ -100,7 +105,9 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
         {/* Streak Chip */}
         <div
           className={styles.streakChip}
-          title={`Longest streak: ${longestStreak} days`}
+          title={`Current study streak: ${streakCount} day${streakCount === 1 ? '' : 's'} · Longest: ${longestStreak} day${longestStreak === 1 ? '' : 's'}`}
+          onClick={() => navigate('/profile')}
+          style={{ cursor: 'pointer' }}
         >
           <span className={styles.streakIcon}>🔥</span>
           <span className={styles.streakCount}>{streakCount}d</span>
@@ -125,6 +132,18 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
         >
           <span>✨</span>
           <span className={styles.aiBtnText}>AI Assistant</span>
+        </button>
+
+        {/* Dark / Light Mode Toggle Button */}
+        <button
+          type="button"
+          className={styles.themeToggleBtn}
+          onClick={toggleTheme}
+          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+          aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        >
+          <span className={styles.themeIcon}>{isDark ? '☀️' : '🌙'}</span>
+          <span className={styles.themeText}>{isDark ? 'Light' : 'Dark'}</span>
         </button>
 
         {/* User Avatar Dropdown */}
@@ -166,6 +185,13 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
                 }}
               >
                 🗺️ My Roadmaps
+              </button>
+              <button
+                type="button"
+                className={styles.menuItem}
+                onClick={toggleTheme}
+              >
+                {isDark ? '☀️ Switch to Light Mode' : '🌙 Switch to Dark Mode'}
               </button>
 
               <div className={styles.menuDivider}></div>

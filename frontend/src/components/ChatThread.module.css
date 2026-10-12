@@ -74,8 +74,8 @@
 /* Context Bar */
 .contextBar {
   padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--color-neutral-200, #e2e8f0);
-  background: #fafafa;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
   display: flex;
   align-items: center;
 }
@@ -93,11 +93,11 @@
   gap: 0.35rem;
   padding: 0.25rem 0.7rem;
   border-radius: 9999px;
-  background: #ffffff;
-  border: 1px solid var(--color-neutral-200, #e2e8f0);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   font-size: 0.78rem;
   font-weight: 500;
-  color: var(--color-neutral-700, #334155);
+  color: var(--color-text);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
@@ -106,9 +106,9 @@
 }
 
 .chipActiveModule {
-  background: #fdf2f8;
-  border-color: #fbcfe8;
-  color: #be185d;
+  background: rgba(190, 24, 93, 0.12);
+  border-color: rgba(251, 207, 232, 0.4);
+  color: #ec4899;
   font-weight: 600;
 }
 
@@ -116,7 +116,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #be185d;
+  background: #ec4899;
 }
 
 /* Message Area */
@@ -128,7 +128,7 @@
   flex-direction: column;
   gap: 1.5rem;
   scroll-behavior: smooth;
-  background: #ffffff;
+  background: var(--color-bg);
 }
 
 .historyLoading {
@@ -204,16 +204,16 @@
   align-items: center;
   gap: 0.625rem;
   padding: 0.75rem 1rem;
-  background: #ffffff;
-  border: 1px solid var(--color-neutral-200, #e2e8f0);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--color-neutral-700, #334155);
+  color: var(--color-text);
   cursor: pointer;
   text-align: left;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-sm);
 }
 
 .suggestionSparkle {
@@ -221,11 +221,11 @@
 }
 
 .suggestionChip:hover {
-  border-color: var(--color-primary, #6366f1);
-  color: var(--color-primary, #6366f1);
-  background: #f8faff;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-neutral-100);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
 }
 
 /* Message Rows */
@@ -300,12 +300,12 @@
 
 /* Assistant Bubble */
 .bubbleAssistant {
-  background: #ffffff;
-  color: var(--color-neutral-900, #0f172a);
-  border: 1px solid var(--color-neutral-200, #e2e8f0);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
   border-radius: 16px 16px 16px 4px;
   padding: 1.1rem 1.35rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
   word-break: break-word;
 }
 
@@ -313,7 +313,7 @@
 .markdownBody {
   font-size: 0.9375rem;
   line-height: 1.65;
-  color: var(--color-neutral-800, #1e293b);
+  color: var(--color-text);
 }
 
 .mdP {
@@ -328,8 +328,8 @@
   font-size: 1.2rem;
   font-weight: 700;
   margin: 1.25rem 0 0.5rem 0;
-  color: var(--color-neutral-900, #0f172a);
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.35rem;
 }
 
@@ -337,14 +337,14 @@
   font-size: 1.05rem;
   font-weight: 700;
   margin: 1rem 0 0.4rem 0;
-  color: var(--color-neutral-900, #0f172a);
+  color: var(--color-text);
 }
 
 .mdH4 {
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0.85rem 0 0.35rem 0;
-  color: var(--color-neutral-800, #1e293b);
+  color: var(--color-text);
 }
 
 .mdUl, .mdOl {
@@ -573,8 +573,8 @@
 /* Composer Area */
 .composerArea {
   padding: 1.25rem 1.75rem 1.5rem 1.75rem;
-  background: #ffffff;
-  border-top: 1px solid var(--color-neutral-200, #e2e8f0);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
 }
 
 .assessmentLockNotice {
@@ -582,10 +582,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.85rem;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+  background: rgba(234, 88, 12, 0.12);
+  border: 1px solid rgba(234, 88, 12, 0.25);
   border-radius: 8px;
-  color: #9a3412;
+  color: #fb923c;
   font-size: 0.8rem;
   font-weight: 500;
   margin-bottom: 0.75rem;
@@ -594,17 +594,17 @@
 .composerWrapper {
   display: flex;
   flex-direction: column;
-  border: 1.5px solid var(--color-neutral-300, #cbd5e1);
+  border: 1.5px solid var(--color-border);
   border-radius: 12px;
   padding: 0.85rem 1rem 0.65rem 1rem;
-  background: #ffffff;
+  background: var(--color-bg);
   transition: all 0.2s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .composerWrapper:focus-within {
-  border-color: var(--color-primary, #6366f1);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
 }
 
 .textarea {
@@ -615,14 +615,14 @@
   font-family: inherit;
   font-size: 0.9375rem;
   line-height: 1.5;
-  color: var(--color-neutral-900, #0f172a);
+  color: var(--color-text);
   min-height: 48px;
   max-height: 180px;
   background: transparent;
 }
 
 .textarea::placeholder {
-  color: var(--color-neutral-400, #94a3b8);
+  color: var(--color-text-light);
 }
 
 .composerFooter {
@@ -631,7 +631,7 @@
   justify-content: space-between;
   margin-top: 0.5rem;
   padding-top: 0.5rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-border);
 }
 
 .composerMeta {

@@ -1,6 +1,6 @@
 .topBar {
   height: 64px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--color-surface-glass, rgba(255, 255, 255, 0.9));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
@@ -11,6 +11,7 @@
   position: sticky;
   top: 0;
   z-index: 5000;
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
 .leftSlot {
@@ -133,6 +134,50 @@
   transform: translateY(-1px);
 }
 
+/* Theme Toggle Button (Dark / Light Mode) */
+.themeToggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.75rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.themeToggleBtn:hover {
+  background-color: var(--color-neutral-100, #f1f5f9);
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.themeIcon {
+  font-size: 0.95rem;
+  line-height: 1;
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.themeToggleBtn:hover .themeIcon {
+  transform: rotate(18deg) scale(1.15);
+}
+
+.themeText {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
 /* Avatar Dropdown */
 .avatarWrapper {
   position: relative;
@@ -244,5 +289,13 @@
 
   .aiBtnText {
     display: none;
+  }
+
+  .themeText {
+    display: none;
+  }
+
+  .themeToggleBtn {
+    padding: 0.38rem 0.5rem;
   }
 }

@@ -15,11 +15,11 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid var(--color-neutral-200, #e2e8f0);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (min-width: 768px) {
@@ -52,6 +52,12 @@
   letter-spacing: 0.02em;
 }
 
+:global([data-theme='dark']) .roomBadge {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
 .pulseDot {
   width: 7px;
   height: 7px;
@@ -65,7 +71,7 @@
   margin: 0 0 0.5rem 0;
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-neutral-900, #0f172a);
+  color: var(--color-text);
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
@@ -73,7 +79,7 @@
 .subtitle {
   margin: 0;
   font-size: 0.95rem;
-  color: var(--color-neutral-600, #475569);
+  color: var(--color-text-muted);
   line-height: 1.55;
 }
 
@@ -88,9 +94,9 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.75rem 1.25rem;
-  background: var(--color-neutral-900, #0f172a);
+  background: #0f172a;
   color: #ffffff;
-  border: 1px solid var(--color-neutral-800, #1e293b);
+  border: 1px solid #1e293b;
   border-radius: 12px;
   font-size: 0.92rem;
   font-weight: 600;
@@ -99,10 +105,20 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+:global([data-theme='dark']) .focusModeButton {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #4338ca 100%);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+}
+
 .focusModeButton:hover {
   background: #1e293b;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
+}
+
+:global([data-theme='dark']) .focusModeButton:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, #3730a3 100%);
 }
 
 .shortcutKey {

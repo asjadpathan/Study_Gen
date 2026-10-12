@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import Heatmap from '../../components/Heatmap';
 import styles from './Profile.module.css';
 
@@ -234,6 +235,7 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
 
 export default function Profile() {
   const { addToast } = useToast();
+  const { updateStreak } = useAuth();
 
   const [profile, setProfile] = useState(null);
   const [heatmapData, setHeatmapData] = useState([]);
@@ -254,12 +256,18 @@ export default function Profile() {
 
       const [profileRes, heatmapRes] = await Promise.all([
         axiosInstance.get('/users/me/profile'),
-        axiosInstance.get('/activity/heatmap'),
+        axiosInstance.get('/activity/heatmap?days=365'),
       ]);
 
       setProfile(profileRes.data);
       setEditName(profileRes.data.fullName || '');
       setHeatmapStats(heatmapRes.data);
+
+      const cur = profileRes.data?.currentStreak ?? heatmapRes.data?.currentStreak;
+      const long = heatmapRes.data?.longestStreak ?? cur;
+      if (typeof cur === 'number' && updateStreak) {
+        updateStreak(cur, long);
+      }
 
       // Format heatmap logs for 365-day graph
       const rawHeatmap = heatmapRes.data?.heatmap || [];
@@ -505,65 +513,71 @@ export default function Profile() {
         </div>
       </section>
 
-      {/* Middle Two-Column Grid: 12-Month Heatmap & Skill Matrix Radar */}
-      <div className={styles.middleGrid}>
-        {/* Left Column: 12-Month Heatmap */}
-        <div className={styles.heatmapSection}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h3 className={styles.sectionTitle}>12-Month Consistency & Study Activity</h3>
-              <p className={styles.sectionSubtitle}>
-                Every Pomodoro sprint, test completion, and AI chat logged over the last 365 days.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.heatmapWrapper}>
-            <Heatmap
-              data={heatmapData}
-              days={365}
-              currentStreak={heatmapStats?.currentStreak ?? profile?.currentStreak ?? 0}
-              longestStreak={heatmapStats?.longestStreak ?? 0}
-              totalActiveDays={heatmapStats?.totalActiveDays ?? 0}
-              todayMinutes={heatmapStats?.todayMinutes ?? 0}
-              embedded={true}
-              showTitle={false}
-            />
-          </div>
-
-          {/* Activity Type Legend Strip */}
-          <div className={styles.activityTypeLegend}>
-            <span className={styles.legendHeader}>Logged Activity Types:</span>
-            <div className={styles.legendItems}>
-              <span className={styles.typePill}>⏱️ Pomodoro Focus</span>
-              <span className={styles.typePill}>🎯 Assessments & Retests</span>
-              <span className={styles.typePill}>💬 AI Mentorship Chats</span>
-              <span className={styles.typePill}>🏋️ Practice Spaced Reviews</span>
-              <span className={styles.typePill}>📄 Document Processing</span>
-            </div>
+      {/* Consistency & Study Activity Heatmap Section */}
+      <section aria-label="Consistency & Study Activity Heatmap" className={styles.heatmapSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <h3 className={styles.sectionTitle}>Consistency & Study Activity</h3>
+            <p className={styles.sectionSubtitle}>
+              Track your daily study sessions, focus time, and learning milestones.
+            </p>
           </div>
         </div>
 
-        {/* Right Column: Skill Matrix Radar Chart */}
-        <div className={styles.radarSection}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h3 className={styles.sectionTitle}>Skill Matrix & Domain Competency</h3>
-              <p className={styles.sectionSubtitle}>
-                Evaluated from completed modules and test performance across 6 domains.
-              </p>
-            </div>
-          </div>
+        <div className={styles.heatmapWrapper}>
+          <Heatmap
+            data={heatmapData}
+            days={365}
+            currentStreak={heatmapStats?.currentStreak ?? profile?.currentStreak ?? 0}
+            longestStreak={heatmapStats?.longestStreak ?? 0}
+            totalActiveDays={heatmapStats?.totalActiveDays ?? 0}
+            todayMinutes={heatmapStats?.todayMinutes ?? 0}
+            embedded={true}
+            showTitle={false}
+          />
+        </div>
 
+<<<<<<< HEAD
+        {/* Activity Type Legend Strip */}
+        <div className={styles.activityTypeLegend}>
+          <span className={styles.legendHeader}>Logged Activity Types:</span>
+          <div className={styles.legendItems}>
+            <span className={styles.typePill}>⏱️ Pomodoro Focus</span>
+            <span className={styles.typePill}>🎯 Assessments & Retests</span>
+            <span className={styles.typePill}>💬 AI Mentorship Chats</span>
+            <span className={styles.typePill}>🏋️ Practice Spaced Reviews</span>
+            <span className={styles.typePill}>📄 Document Processing</span>
+=======
           <div className={styles.radarCardBody}>
             <SkillMatrixRadar data={profile?.skillsRadar} />
             <div className={styles.radarLegend}>
               <span className={styles.radarLegendDot}></span>
               <span>Active Competency Polygon (0% to 100% mastery scale)</span>
             </div>
+>>>>>>> 96aa42e4d15853928a3a4f19121281fba7b9eb24
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Skill Matrix Radar Section */}
+      <section aria-label="Skill Matrix & Domain Competency" className={styles.radarSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <h3 className={styles.sectionTitle}>Skill Matrix & Domain Competency</h3>
+            <p className={styles.sectionSubtitle}>
+              Evaluated from completed modules and test performance across 6 domains.
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.radarCardBody}>
+          {renderSkillMatrixRadar()}
+          <div className={styles.radarLegend}>
+            <span className={styles.radarLegendDot}></span>
+            <span>Active Competency Polygon (0% to 100% mastery scale)</span>
+          </div>
+        </div>
+      </section>
 
       {/* Bottom Section: Achievements & Badges Grid */}
       <section aria-label="Achievements & Badges" className={styles.badgesSection}>

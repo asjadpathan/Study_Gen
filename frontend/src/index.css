@@ -67,6 +67,18 @@
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* Neutral Color Palette (Light Mode Default) */
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
   font: 16px/1.6 var(--font-sans);
   color: var(--color-text);
   background-color: var(--color-bg);
@@ -74,12 +86,71 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* ========================================
+   DARK THEME SYSTEM TOKENS
+   ======================================== */
+[data-theme='dark'],
+.dark-theme {
+  /* Surfaces & Backgrounds */
+  --color-bg: #090d16;
+  --color-surface: #111827;
+  --color-surface-glass: rgba(17, 24, 39, 0.88);
+  --color-border: #1f293d;
+  --color-border-hover: #334155;
+
+  /* Text Colors */
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-text-light: #64748b;
+  --color-text-inverted: #0f172a;
+
+  /* Primary Palette (Optimized for Dark Backgrounds) */
+  --color-primary: #6366f1;
+  --color-primary-hover: #818cf8;
+  --color-primary-active: #4f46e5;
+  --color-primary-light: #a5b4fc;
+  --color-primary-50: #1e1b4b;
+  --color-primary-100: #2e2a72;
+  --color-primary-200: #3730a3;
+
+  /* Secondary & Tertiary */
+  --color-secondary: #f8fafc;
+  --color-secondary-hover: #e2e8f0;
+  --color-secondary-active: #cbd5e1;
+
+  --color-tertiary-light: #2e1065;
+  --color-accent-light: #451a03;
+
+  /* Neutrals for Dark Mode Components */
+  --color-neutral-50: #111827;
+  --color-neutral-100: #1f293d;
+  --color-neutral-200: #334155;
+  --color-neutral-300: #475569;
+  --color-neutral-400: #64748b;
+  --color-neutral-500: #94a3b8;
+  --color-neutral-600: #cbd5e1;
+  --color-neutral-700: #e2e8f0;
+  --color-neutral-800: #f1f5f9;
+  --color-neutral-900: #ffffff;
+
+  /* Dark Elevation & Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.65), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.35);
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 #root {
@@ -112,4 +183,5 @@ button {
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--color-bg);
 }

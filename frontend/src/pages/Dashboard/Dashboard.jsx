@@ -14,7 +14,7 @@ import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateStreak } = useAuth();
   const { addToast } = useToast();
 
   // Section States: independent loading & error tracking
@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [heatmapLoading, setHeatmapLoading] = useState(true);
   const [heatmapError, setHeatmapError] = useState(null);
   const [heatmapData, setHeatmapData] = useState([]);
+  const [heatmapStats, setHeatmapStats] = useState(null);
 
   const [practiceLoading, setPracticeLoading] = useState(true);
   const [practiceError, setPracticeError] = useState(null);
@@ -42,6 +43,9 @@ const Dashboard = () => {
       .get('/users/me/dashboard')
       .then((res) => {
         setDashData(res.data);
+        if (typeof res.data?.currentStreak === 'number' && updateStreak) {
+          updateStreak(res.data.currentStreak);
+        }
       })
       .catch(() => {
         setDashError('Failed to load dashboard statistics.');
@@ -53,10 +57,21 @@ const Dashboard = () => {
     setHeatmapLoading(true);
     setHeatmapError(null);
     axiosInstance
-      .get('/analytics/streak-heatmap?days=180')
+      .get('/activity/heatmap?days=365')
       .then((res) => {
-        const heatmapList = res.data?.logs || res.data?.activities || res.data || [];
-        setHeatmapData(Array.isArray(heatmapList) ? heatmapList : []);
+        setHeatmapStats(res.data);
+        const rawList = res.data?.heatmap || [];
+        const formatted = rawList.map((entry) => ({
+          date: entry.date,
+          minutesLogged: entry.totalMinutes || 0,
+          activityCount: entry.count !== undefined ? entry.count : (entry.totalMinutes > 0 ? 1 : 0),
+          intensityLevel: entry.intensityLevel,
+        }));
+        setHeatmapData(formatted);
+
+        if (typeof res.data?.currentStreak === 'number' && updateStreak) {
+          updateStreak(res.data.currentStreak, res.data.longestStreak);
+        }
       })
       .catch(() => {
         setHeatmapError('Failed to load activity heatmap.');
@@ -384,7 +399,14 @@ const Dashboard = () => {
           ) : heatmapError ? (
             <ErrorCard message={heatmapError} onRetry={fetchHeatmapData} />
           ) : (
-            <Heatmap data={heatmapData} days={180} />
+            <Heatmap
+              data={heatmapData}
+              days={365}
+              currentStreak={heatmapStats?.currentStreak ?? user?.currentStreak ?? dashData?.currentStreak ?? 0}
+              longestStreak={heatmapStats?.longestStreak ?? user?.longestStreak ?? 0}
+              totalActiveDays={heatmapStats?.totalActiveDays ?? 0}
+              todayMinutes={heatmapStats?.todayMinutes ?? 0}
+            />
           )}
         </div>
 

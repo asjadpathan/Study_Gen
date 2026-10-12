@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Skeleton from '../../components/Skeleton';
@@ -16,6 +17,7 @@ const ModuleTest = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { refreshStreak } = useAuth();
 
   // Screen states: 'prestart' | 'quiz' | 'result'
   const [screen, setScreen] = useState('prestart');
@@ -111,6 +113,10 @@ const ModuleTest = () => {
 
       setAttemptResult(res.data);
       setScreen('result');
+
+      if (refreshStreak) {
+        refreshStreak();
+      }
 
       if (res.data.passed) {
         addToast('🏆 Module Passed! Next module unlocked.', 'success');

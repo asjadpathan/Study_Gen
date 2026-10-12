@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import Button from './Button';
 import logoImg from '../assets/images/logo.png';
 import styles from './Navbar.module.css';
@@ -7,6 +8,7 @@ import styles from './Navbar.module.css';
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleNavClick = (id) => {
     setMobileMenuOpen(false);
@@ -44,6 +46,17 @@ const Navbar = () => {
 
         {/* Action Buttons */}
         <div className={styles.authButtons}>
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            className={styles.themeToggleBtn}
+            onClick={toggleTheme}
+            title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+            aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+          >
+            <span>{isDark ? '☀️' : '🌙'}</span>
+          </button>
+
           <Button
             variant="outlined"
             size="sm"

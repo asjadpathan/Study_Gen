@@ -86,6 +86,27 @@
   gap: 0.75rem;
 }
 
+.themeToggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.themeToggleBtn:hover {
+  background-color: var(--color-neutral-100, #f1f5f9);
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
+}
+
 /* Mobile Hamburger Toggle */
 .hamburger {
   display: none;
