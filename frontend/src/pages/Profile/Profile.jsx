@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
@@ -58,10 +58,13 @@ const BADGES_CATALOG = [
 
 // Helper for Initials
 const getInitials = (name) => {
-  if (!name) return 'SG';
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  if (!name || typeof name !== 'string') return 'SG';
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'SG';
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase() || 'SG';
+  const first = parts[0][0] || '';
+  const last = parts[parts.length - 1][0] || '';
+  return (first + last).toUpperCase() || 'SG';
 };
 
 const DEFAULT_RADAR_DATA = [
@@ -75,13 +78,13 @@ const DEFAULT_RADAR_DATA = [
 
 // Memoized SVG Radar Chart component
 const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
-  const radarData = data && data.length > 0 ? data : DEFAULT_RADAR_DATA;
+  const radarData = Array.isArray(data) && data.length > 0 ? data : DEFAULT_RADAR_DATA;
   const viewBoxWidth = 360;
   const viewBoxHeight = 310;
   const centerX = viewBoxWidth / 2; // 180
   const centerY = viewBoxHeight / 2; // 155
   const radius = 80;
-  const totalAxes = radarData.length;
+  const totalAxes = Math.max(3, radarData.length);
 
   const getCoordinates = (index, pct) => {
     const angle = (index * 2 * Math.PI) / totalAxes - Math.PI / 2;
@@ -95,7 +98,8 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
   const rings = [0.25, 0.5, 0.75, 1.0];
 
   const dataPoints = radarData.map((d, i) => {
-    const scorePct = Math.max(0.15, Math.min(1.0, (d.score || 0) / 100));
+    const scoreVal = typeof d?.score === 'number' ? d.score : 20;
+    const scorePct = Math.max(0.15, Math.min(1.0, scoreVal / 100));
     return getCoordinates(i, scorePct);
   });
   const polygonPointsString = dataPoints.map((p) => `${p.x},${p.y}`).join(' ');
@@ -214,20 +218,24 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
 
       {/* Domain Skill Progress Breakdown */}
       <div className={styles.skillListGrid}>
-        {radarData.map((d) => (
-          <div key={d.axis} className={styles.skillItem}>
-            <div className={styles.skillHeader}>
-              <span className={styles.skillName}>{d.axis}</span>
-              <span className={styles.skillScore}>{d.score}%</span>
+        {radarData.map((d, idx) => {
+          const axisTitle = d?.axis || `Domain ${idx + 1}`;
+          const axisScore = typeof d?.score === 'number' ? d.score : 20;
+          return (
+            <div key={axisTitle} className={styles.skillItem}>
+              <div className={styles.skillHeader}>
+                <span className={styles.skillName}>{axisTitle}</span>
+                <span className={styles.skillScore}>{axisScore}%</span>
+              </div>
+              <div className={styles.skillProgressBar}>
+                <div
+                  className={styles.skillProgressFill}
+                  style={{ width: `${Math.min(100, Math.max(8, axisScore))}%` }}
+                />
+              </div>
             </div>
-            <div className={styles.skillProgressBar}>
-              <div
-                className={styles.skillProgressFill}
-                style={{ width: `${Math.min(100, Math.max(8, d.score))}%` }}
-              />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -235,60 +243,128 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
 
 export default function Profile() {
   const { addToast } = useToast();
-  const { updateStreak } = useAuth();
+  const { user, updateStreak } = useAuth();
 
-  const [profile, setProfile] = useState(null);
+  // Initialize with cached auth user data if available to prevent flash/blank screen
+  const [profile, setProfile] = useState(() => {
+    let initialUser = user;
+    if (!initialUser) {
+      try {
+        const stored = localStorage.getItem('studygen_user');
+        if (stored) initialUser = JSON.parse(stored);
+      } catch {}
+    }
+    if (initialUser) {
+      return {
+        fullName: initialUser.fullName || 'StudyGen Scholar',
+        email: initialUser.email || '',
+        currentStreak: initialUser.currentStreak || 0,
+        longestStreak: initialUser.longestStreak || 0,
+        totalStudyMinutes: 0,
+        totalStudyHours: 0,
+        totalRoadmaps: 0,
+        completedModulesCount: 0,
+        passedTestsCount: 0,
+        skillVelocityModulesPerWeek: 0,
+        totalBadgesEarned: 0,
+        badges: [],
+        skillsRadar: DEFAULT_RADAR_DATA,
+        memberSince: '2026',
+      };
+    }
+    return null;
+  });
+
   const [heatmapData, setHeatmapData] = useState([]);
   const [heatmapStats, setHeatmapStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!profile);
   const [error, setError] = useState(null);
 
   // Edit Profile Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editName, setEditName] = useState('');
+  const [editName, setEditName] = useState(user?.fullName || '');
   const [savingProfile, setSavingProfile] = useState(false);
 
-  // Fetch Profile & Heatmap on mount
-  const loadData = async () => {
+  const userRef = useRef(user);
+  useEffect(() => {
+    userRef.current = user;
+    if (user?.fullName) {
+      setEditName((prev) => prev || user.fullName);
+    }
+  }, [user]);
+
+  // Fetch Profile & Heatmap on mount with graceful fallback
+  const loadData = useCallback(async () => {
     try {
-      setLoading(true);
       setError(null);
 
-      const [profileRes, heatmapRes] = await Promise.all([
+      const [profileResult, heatmapResult] = await Promise.allSettled([
         axiosInstance.get('/users/me/profile'),
         axiosInstance.get('/activity/heatmap?days=365'),
       ]);
 
-      setProfile(profileRes.data);
-      setEditName(profileRes.data.fullName || '');
-      setHeatmapStats(heatmapRes.data);
-
-      const cur = profileRes.data?.currentStreak ?? heatmapRes.data?.currentStreak;
-      const long = heatmapRes.data?.longestStreak ?? cur;
-      if (typeof cur === 'number' && updateStreak) {
-        updateStreak(cur, long);
+      let loadedProfile = null;
+      if (profileResult.status === 'fulfilled' && profileResult.value?.data) {
+        loadedProfile = profileResult.value.data;
+        setProfile(loadedProfile);
+        setEditName(loadedProfile.fullName || '');
+      } else {
+        const currentUser = userRef.current;
+        if (currentUser) {
+          loadedProfile = {
+            fullName: currentUser.fullName || 'StudyGen Scholar',
+            email: currentUser.email || '',
+            currentStreak: currentUser.currentStreak || 0,
+            longestStreak: currentUser.longestStreak || 0,
+            totalStudyMinutes: 0,
+            totalStudyHours: 0,
+            totalRoadmaps: 0,
+            completedModulesCount: 0,
+            passedTestsCount: 0,
+            skillVelocityModulesPerWeek: 0,
+            totalBadgesEarned: 0,
+            badges: [],
+            skillsRadar: DEFAULT_RADAR_DATA,
+            memberSince: '2026',
+          };
+          setProfile((prev) => prev || loadedProfile);
+        }
       }
 
-      // Format heatmap logs for 365-day graph
-      const rawHeatmap = heatmapRes.data?.heatmap || [];
-      const formattedHeatmap = rawHeatmap.map((entry) => ({
-        date: entry.date,
-        minutesLogged: entry.totalMinutes || 0,
-        activityCount: entry.count ?? entry.sessionCount ?? (entry.totalMinutes > 0 ? 1 : 0),
-        intensityLevel: entry.intensityLevel,
-      }));
-      setHeatmapData(formattedHeatmap);
+      if (heatmapResult.status === 'fulfilled' && heatmapResult.value?.data) {
+        const heatmapResData = heatmapResult.value.data;
+        setHeatmapStats(heatmapResData);
+
+        const cur = loadedProfile?.currentStreak ?? heatmapResData.currentStreak;
+        const long = heatmapResData.longestStreak ?? cur;
+        if (typeof cur === 'number' && updateStreak) {
+          updateStreak(cur, long);
+        }
+
+        const rawHeatmap = heatmapResData.heatmap || [];
+        const formattedHeatmap = rawHeatmap.map((entry) => ({
+          date: entry.date,
+          minutesLogged: entry.totalMinutes || 0,
+          activityCount: entry.count ?? entry.sessionCount ?? (entry.totalMinutes > 0 ? 1 : 0),
+          intensityLevel: entry.intensityLevel,
+        }));
+        setHeatmapData(formattedHeatmap);
+      }
+
+      if (profileResult.status === 'rejected' && heatmapResult.status === 'rejected' && !loadedProfile) {
+        setError('Could not load user profile. Please check your connection.');
+      }
     } catch (err) {
       console.error('Failed to load profile data:', err);
       setError('Could not load user profile. Please check your connection.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [updateStreak]);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   // Save Edit Profile Modal
   const handleSaveProfile = async (e) => {
@@ -312,9 +388,7 @@ export default function Profile() {
     }
   };
 
-
-
-  if (loading) {
+  if (loading && !profile) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.spinner}></div>
@@ -323,7 +397,7 @@ export default function Profile() {
     );
   }
 
-  if (error || !profile) {
+  if (error && !profile) {
     return (
       <div className={styles.errorContainer}>
         <span className={styles.errorIcon}>⚠️</span>
@@ -338,15 +412,20 @@ export default function Profile() {
 
   // Check if new-user (all core metrics 0)
   const isNewUser =
-    profile.currentStreak === 0 &&
-    profile.completedModulesCount === 0 &&
-    profile.totalStudyMinutes === 0;
+    (profile?.currentStreak ?? 0) === 0 &&
+    (profile?.completedModulesCount ?? 0) === 0 &&
+    (profile?.totalStudyMinutes ?? 0) === 0;
 
-  // Build earned badge mapping
+  // Build earned badge mapping safely
   const earnedBadgeMap = new Map();
-  (profile.badges || []).forEach((b) => {
-    earnedBadgeMap.set(b.badgeName?.toLowerCase().trim(), b.earnedAt);
-  });
+  if (Array.isArray(profile?.badges)) {
+    profile.badges.forEach((b) => {
+      const rawName = typeof b === 'string' ? b : (b?.badgeName || b?.name || '');
+      if (rawName && typeof rawName === 'string') {
+        earnedBadgeMap.set(rawName.toLowerCase().trim(), b?.earnedAt || 'Earned');
+      }
+    });
+  }
 
   return (
     <div className={styles.container}>
@@ -354,21 +433,21 @@ export default function Profile() {
       <header className={styles.profileHeader}>
         <div className={styles.headerLeft}>
           <div className={styles.avatar}>
-            {getInitials(profile.fullName)}
+            {getInitials(profile?.fullName)}
           </div>
           <div className={styles.identity}>
             <div className={styles.nameRow}>
-              <h1 className={styles.userName}>{profile.fullName || 'StudyGen Scholar'}</h1>
+              <h1 className={styles.userName}>{profile?.fullName || 'StudyGen Scholar'}</h1>
               <span className={styles.roleBadge}>🎓 Verified Learner</span>
             </div>
-            <p className={styles.userEmail}>{profile.email}</p>
+            <p className={styles.userEmail}>{profile?.email || ''}</p>
             <div className={styles.metaRow}>
               <span className={styles.metaItem}>
-                📅 Member since <strong>{profile.memberSince || '2026'}</strong>
+                📅 Member since <strong>{profile?.memberSince || '2026'}</strong>
               </span>
               <span className={styles.metaDot}>•</span>
               <span className={styles.metaItem}>
-                🔥 <strong>{profile.currentStreak}</strong> Day Streak
+                🔥 <strong>{profile?.currentStreak ?? 0}</strong> Day Streak
               </span>
             </div>
           </div>
@@ -395,10 +474,10 @@ export default function Profile() {
             <span className={styles.statLabel}>Current Streak</span>
           </div>
           <span className={styles.statValue}>
-            {profile.currentStreak} <small className={styles.statUnit}>days</small>
+            {profile?.currentStreak ?? 0} <small className={styles.statUnit}>days</small>
           </span>
           <span className={styles.statCaption}>
-            {isNewUser && profile.currentStreak === 0
+            {isNewUser && (profile?.currentStreak ?? 0) === 0
               ? 'Start your streak today!'
               : 'Continuous daily study'}
           </span>
@@ -413,12 +492,12 @@ export default function Profile() {
             <span className={styles.statLabel}>Focused Study</span>
           </div>
           <span className={styles.statValue}>
-            {profile.totalStudyHours} <small className={styles.statUnit}>hrs</small>
+            {profile?.totalStudyHours ?? 0} <small className={styles.statUnit}>hrs</small>
           </span>
           <span className={styles.statCaption}>
-            {isNewUser && profile.totalStudyHours === 0
+            {isNewUser && (profile?.totalStudyHours ?? 0) === 0
               ? 'Ready for session #1'
-              : `${profile.totalStudyMinutes} total minutes`}
+              : `${profile?.totalStudyMinutes ?? 0} total minutes`}
           </span>
         </div>
 
@@ -431,10 +510,10 @@ export default function Profile() {
             <span className={styles.statLabel}>Active Roadmaps</span>
           </div>
           <span className={styles.statValue}>
-            {profile.totalRoadmaps} <small className={styles.statUnit}>paths</small>
+            {profile?.totalRoadmaps ?? 0} <small className={styles.statUnit}>paths</small>
           </span>
           <span className={styles.statCaption}>
-            {isNewUser && profile.totalRoadmaps === 0
+            {isNewUser && (profile?.totalRoadmaps ?? 0) === 0
               ? 'Generate your first path'
               : 'Learning tracks enrolled'}
           </span>
@@ -449,10 +528,10 @@ export default function Profile() {
             <span className={styles.statLabel}>Modules Mastered</span>
           </div>
           <span className={styles.statValue}>
-            {profile.completedModulesCount} <small className={styles.statUnit}>modules</small>
+            {profile?.completedModulesCount ?? 0} <small className={styles.statUnit}>modules</small>
           </span>
           <span className={styles.statCaption}>
-            {isNewUser && profile.completedModulesCount === 0
+            {isNewUser && (profile?.completedModulesCount ?? 0) === 0
               ? 'Complete a module to start'
               : 'Verified competency mastery'}
           </span>
@@ -467,10 +546,10 @@ export default function Profile() {
             <span className={styles.statLabel}>Passed Tests</span>
           </div>
           <span className={styles.statValue}>
-            {profile.passedTestsCount} <small className={styles.statUnit}>passed</small>
+            {profile?.passedTestsCount ?? 0} <small className={styles.statUnit}>passed</small>
           </span>
           <span className={styles.statCaption}>
-            {isNewUser && profile.passedTestsCount === 0
+            {isNewUser && (profile?.passedTestsCount ?? 0) === 0
               ? 'Take tests to verify skills'
               : 'Diagnostic & module retests'}
           </span>
@@ -485,10 +564,10 @@ export default function Profile() {
             <span className={styles.statLabel}>Mastery Velocity</span>
           </div>
           <span className={styles.statValue}>
-            {profile.skillVelocityModulesPerWeek} <small className={styles.statUnit}>/wk</small>
+            {profile?.skillVelocityModulesPerWeek ?? 0} <small className={styles.statUnit}>/wk</small>
           </span>
           <span className={styles.statCaption}>
-            {isNewUser && profile.skillVelocityModulesPerWeek === 0
+            {isNewUser && (profile?.skillVelocityModulesPerWeek ?? 0) === 0
               ? 'Build weekly momentum'
               : 'Modules completed / week'}
           </span>
@@ -503,10 +582,10 @@ export default function Profile() {
             <span className={styles.statLabel}>Badges Earned</span>
           </div>
           <span className={styles.statValue}>
-            {profile.totalBadgesEarned} <small className={styles.statUnit}>/ 8</small>
+            {profile?.totalBadgesEarned ?? 0} <small className={styles.statUnit}>/ 8</small>
           </span>
           <span className={styles.statCaption}>
-            {isNewUser && profile.totalBadgesEarned === 0
+            {isNewUser && (profile?.totalBadgesEarned ?? 0) === 0
               ? '8 milestones to unlock'
               : 'Platform achievements'}
           </span>
@@ -537,7 +616,6 @@ export default function Profile() {
           />
         </div>
 
-<<<<<<< HEAD
         {/* Activity Type Legend Strip */}
         <div className={styles.activityTypeLegend}>
           <span className={styles.legendHeader}>Logged Activity Types:</span>
@@ -547,14 +625,6 @@ export default function Profile() {
             <span className={styles.typePill}>💬 AI Mentorship Chats</span>
             <span className={styles.typePill}>🏋️ Practice Spaced Reviews</span>
             <span className={styles.typePill}>📄 Document Processing</span>
-=======
-          <div className={styles.radarCardBody}>
-            <SkillMatrixRadar data={profile?.skillsRadar} />
-            <div className={styles.radarLegend}>
-              <span className={styles.radarLegendDot}></span>
-              <span>Active Competency Polygon (0% to 100% mastery scale)</span>
-            </div>
->>>>>>> 96aa42e4d15853928a3a4f19121281fba7b9eb24
           </div>
         </div>
       </section>
@@ -571,7 +641,7 @@ export default function Profile() {
         </div>
 
         <div className={styles.radarCardBody}>
-          {renderSkillMatrixRadar()}
+          <SkillMatrixRadar data={profile?.skillsRadar} />
           <div className={styles.radarLegend}>
             <span className={styles.radarLegendDot}></span>
             <span>Active Competency Polygon (0% to 100% mastery scale)</span>
@@ -589,14 +659,15 @@ export default function Profile() {
             </p>
           </div>
           <span className={styles.badgesProgressPill}>
-            {profile.totalBadgesEarned} of {BADGES_CATALOG.length} Unlocked
+            {profile?.totalBadgesEarned ?? 0} of {BADGES_CATALOG.length} Unlocked
           </span>
         </div>
 
         <div className={styles.badgesGrid}>
           {BADGES_CATALOG.map((b) => {
-            const earnedDate = earnedBadgeMap.get(b.name.toLowerCase().trim());
-            const isEarned = !!earnedDate;
+            const badgeKey = (b?.name || '').toLowerCase().trim();
+            const earnedDate = badgeKey ? earnedBadgeMap.get(badgeKey) : null;
+            const isEarned = Boolean(earnedDate);
 
             return (
               <div
@@ -682,7 +753,7 @@ export default function Profile() {
                 <input
                   id="editEmail"
                   type="email"
-                  value={profile.email}
+                  value={profile?.email || ''}
                   disabled
                   className={`${styles.input} ${styles.inputDisabled}`}
                 />

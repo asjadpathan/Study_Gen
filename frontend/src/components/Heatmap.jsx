@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styles from './Heatmap.module.css';
 
-const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 // Format a date object to 'YYYY-MM-DD' using local timezone
 const formatLocalDate = (d) => {
   const year = d.getFullYear();
@@ -15,7 +13,7 @@ const Heatmap = ({
   data = [],
   days = 60,
   currentStreak,
-  longestStreak,
+  longestStreak: _longestStreak,
   totalActiveDays,
   todayMinutes,
   embedded = false,

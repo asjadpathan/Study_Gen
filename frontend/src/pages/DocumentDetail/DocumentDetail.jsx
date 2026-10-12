@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -41,7 +41,7 @@ const DocumentDetail = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const fetchDocument = async () => {
+  const fetchDocument = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -53,11 +53,11 @@ const DocumentDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) fetchDocument();
-  }, [id]);
+  }, [fetchDocument, id]);
 
   // Polling if still processing
   useEffect(() => {

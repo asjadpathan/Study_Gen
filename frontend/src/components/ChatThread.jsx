@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Button from './Button';
 import { useToast } from '../context/ToastContext';
 import axiosInstance from '../services/axiosInstance';
 import styles from './ChatThread.module.css';
@@ -234,7 +233,7 @@ const ChatThread = ({
                   )
                 );
                 i++; // Skip citations data line
-              } catch (ignored) {}
+              } catch {}
             }
           } else if (line.startsWith('data:')) {
             const dataStr = line.slice(5).trim();

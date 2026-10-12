@@ -145,7 +145,7 @@ const ModuleStudy = () => {
       try {
         const res = await axiosInstance.get(`/study-guide/modules/${id}`);
         setGuideData(res.data);
-      } catch (err) {
+      } catch {
         addToast('Study guide currently unavailable for this module.', 'info');
       } finally {
         setGuideLoading(false);

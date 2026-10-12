@@ -51,7 +51,7 @@ const Dashboard = () => {
         setDashError('Failed to load dashboard statistics.');
       })
       .finally(() => setDashLoading(false));
-  }, []);
+  }, [updateStreak]);
 
   const fetchHeatmapData = useCallback(() => {
     setHeatmapLoading(true);
@@ -77,7 +77,7 @@ const Dashboard = () => {
         setHeatmapError('Failed to load activity heatmap.');
       })
       .finally(() => setHeatmapLoading(false));
-  }, []);
+  }, [updateStreak]);
 
   const fetchPracticeDueData = useCallback(() => {
     setPracticeLoading(true);
