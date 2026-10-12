@@ -22,7 +22,7 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, refreshStreak } = useAuth();
-  const { theme, isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [flashcardsDue, setFlashcardsDue] = useState(0);

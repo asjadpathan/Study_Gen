@@ -4,7 +4,7 @@ import StatusPill from '../../../components/StatusPill';
 import Button from '../../../components/Button';
 import styles from './GraphView.module.css';
 
-const GraphView = ({ graphData, modules = [], onRefresh }) => {
+const GraphView = ({ graphData, modules = [], onRefresh: _onRefresh }) => {
   const navigate = useNavigate();
 
   const [zoom, setZoom] = useState(1);

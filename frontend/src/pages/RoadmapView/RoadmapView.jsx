@@ -81,7 +81,7 @@ const RoadmapView = () => {
       };
       fetchGraph();
     }
-  }, [activeTab, graphData, roadmapId]);
+  }, [activeTab, graphData, roadmapId, addToast]);
 
   // Inline Title Save
   const handleSaveTitle = async () => {

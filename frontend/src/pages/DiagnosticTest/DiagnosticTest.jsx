@@ -64,7 +64,7 @@ const DiagnosticTest = () => {
 
   const formData = location.state?.formData;
   const targetTopic = formData?.targetTopic || 'Full-Stack Software Engineering';
-  const knownSkills = formData?.knownSkills || [];
+  const knownSkillsStr = (formData?.knownSkills || []).join(', ');
 
   const [loading, setLoading] = useState(true);
   const [assessmentId, setAssessmentId] = useState(null);
@@ -80,15 +80,16 @@ const DiagnosticTest = () => {
 
   // Generate 5-question diagnostic assessment on mount
   useEffect(() => {
+    let isCancelled = false;
     const fetchDiagnostic = async () => {
       setLoading(true);
       try {
         const res = await axiosInstance.post('/assessments/diagnostic/generate', {
           topic: targetTopic,
-          claimedPrerequisites: (knownSkills || []).join(', '),
+          claimedPrerequisites: knownSkillsStr,
         });
 
-        if (res.data?.id && res.data?.questions?.length > 0) {
+        if (!isCancelled && res.data?.id && res.data?.questions?.length > 0) {
           setAssessmentId(res.data.id);
           // Map questions
           const qList = res.data.questions.map((q, idx) => ({
@@ -97,19 +98,22 @@ const DiagnosticTest = () => {
             options: q.options || [],
           }));
           setQuestions(qList.slice(0, 5));
-        } else {
+        } else if (!isCancelled) {
           setQuestions(DEFAULT_QUESTIONS);
         }
       } catch (err) {
         console.warn('Diagnostic generation fallback used:', err);
-        setQuestions(DEFAULT_QUESTIONS);
+        if (!isCancelled) setQuestions(DEFAULT_QUESTIONS);
       } finally {
-        setLoading(false);
+        if (!isCancelled) setLoading(false);
       }
     };
 
     fetchDiagnostic();
-  }, [targetTopic, knownSkills]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [targetTopic, knownSkillsStr]);
 
   const handleSelectOption = (optIndex) => {
     setSelectedAnswers((prev) => ({

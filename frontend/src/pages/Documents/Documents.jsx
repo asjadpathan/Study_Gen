@@ -80,10 +80,11 @@ const Documents = () => {
 
   useEffect(() => {
     fetchDocumentsAndRoadmaps();
+    const registry = pollRegistryRef.current;
 
     return () => {
       // Clear any pending timeouts on unmount
-      Object.values(pollRegistryRef.current).forEach((entry) => {
+      Object.values(registry).forEach((entry) => {
         if (entry.timeoutId) clearTimeout(entry.timeoutId);
       });
     };

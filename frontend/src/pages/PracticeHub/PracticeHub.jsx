@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
-import StatusPill from '../../components/StatusPill';
 import EmptyState from '../../components/EmptyState';
 import axiosInstance from '../../services/axiosInstance';
 import styles from './PracticeHub.module.css';

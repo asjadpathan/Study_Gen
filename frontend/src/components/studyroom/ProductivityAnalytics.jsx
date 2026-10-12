@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axiosInstance from '../../services/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
 import Heatmap from '../Heatmap';
@@ -21,7 +21,7 @@ export default function ProductivityAnalytics({ refreshTrigger = 0 }) {
   });
   const [hoveredBar, setHoveredBar] = useState(null);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -36,11 +36,11 @@ export default function ProductivityAnalytics({ refreshTrigger = 0 }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [updateStreak]);
 
   useEffect(() => {
     fetchAnalytics();
-  }, [refreshTrigger]);
+  }, [fetchAnalytics, refreshTrigger]);
 
   // Transform backend heatmap data format accurately
   const heatmapData = (analytics.heatmap || []).map((entry) => ({

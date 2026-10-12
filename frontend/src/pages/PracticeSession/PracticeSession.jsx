@@ -158,11 +158,7 @@ const PracticeSession = () => {
         setIsSubmitting(false);
       }
     },
-<<<<<<< HEAD
-    [currentCard, currentIndex, cards.length, isSubmitting, refreshStreak]
-=======
-    [currentCard, currentIndex, cards.length]
->>>>>>> 96aa42e4d15853928a3a4f19121281fba7b9eb24
+    [currentCard, currentIndex, cards.length, refreshStreak]
   );
 
   // Keyboard navigation

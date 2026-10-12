@@ -127,7 +127,7 @@ const Community = () => {
 
   // Discussion Thread Composer state
   const [postDraft, setPostDraft] = useState('');
-  const [postTag, setPostTag] = useState('Discussion');
+  const [postTag] = useState('Discussion');
   const [rateLimitSeconds, setRateLimitSeconds] = useState(0);
   const [expandedComments, setExpandedComments] = useState({});
   const [commentDrafts, setCommentDrafts] = useState({});
@@ -249,7 +249,7 @@ const Community = () => {
   };
 
   // Report post
-  const handleReportPost = (postId) => {
+  const handleReportPost = (_postId) => {
     addToast('Thank you for your report. Our community moderation team has been notified.', 'success');
   };
 

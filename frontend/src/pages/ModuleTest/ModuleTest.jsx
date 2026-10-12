@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
@@ -39,7 +39,7 @@ const ModuleTest = () => {
   const [attemptResult, setAttemptResult] = useState(null);
 
   // Pre-start: Fetch or resume module test
-  const fetchModuleTest = async () => {
+  const fetchModuleTest = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -51,13 +51,13 @@ const ModuleTest = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) {
       fetchModuleTest();
     }
-  }, [id]);
+  }, [fetchModuleTest, id]);
 
   // Live countdown timer for cooldown
   useEffect(() => {

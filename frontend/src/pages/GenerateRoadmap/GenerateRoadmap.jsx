@@ -91,10 +91,9 @@ const GenerateRoadmap = () => {
   const [urlInput, setUrlInput] = useState('');
 
   // Submission & Overlay States
-  const [submitting, setSubmitting] = useState(false);
-  const [takingLonger, setTakingLonger] = useState(false);
-  const [errorCode, setErrorCode] = useState(null); // 422 | 429 | 502
-  const [errorMessage, setErrorMessage] = useState('');
+  const [submitting] = useState(false);
+  const [errorCode] = useState(null); // 422 | 429 | 502
+  const [errorMessage] = useState('');
 
   // Handle block browser back navigation during generation
   useEffect(() => {

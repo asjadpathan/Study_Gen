@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
 import DifficultyTag from '../../components/DifficultyTag';
@@ -35,7 +35,7 @@ export default function Resources() {
   const [savingIds, setSavingIds] = useState(new Set());
 
   // Fetch Resources function
-  const fetchResources = async () => {
+  const fetchResources = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -58,7 +58,7 @@ export default function Resources() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, selectedCategory]);
 
   // Preload saved count on mount
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function Resources() {
 
   useEffect(() => {
     fetchResources();
-  }, [activeTab, selectedCategory]);
+  }, [fetchResources]);
 
   // Handle Save / Unsave Bookmark Toggle
   const handleToggleSave = async (resource) => {

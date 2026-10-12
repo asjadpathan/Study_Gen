@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -13,7 +13,6 @@ const ScenarioDrill = ({ drill, moduleId }) => {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluation, setEvaluation] = useState(null);
   const [showReference, setShowReference] = useState(false);
-  const [evalError, setEvalError] = useState(null);
 
   const wordCount = useMemo(
     () => (userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0),
@@ -23,7 +22,6 @@ const ScenarioDrill = ({ drill, moduleId }) => {
   const handleCheckAnswer = async () => {
     if (!userAnswer.trim() || isEvaluating) return;
     setIsEvaluating(true);
-    setEvalError(null);
     try {
       const res = await axiosInstance.post(`/modules/${moduleId}/drills/evaluate`, {
         userAnswer,
@@ -400,7 +398,7 @@ const ModuleDrills = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState(null);
 
-  const fetchDrills = async () => {
+  const fetchDrills = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
     try {
@@ -420,11 +418,11 @@ const ModuleDrills = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) fetchDrills();
-  }, [id]);
+  }, [fetchDrills, id]);
 
   const handleGenerateMore = async () => {
     setIsGenerating(true);
