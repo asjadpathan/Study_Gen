@@ -10,29 +10,29 @@ export default function ChatPage() {
   const [creatingSession, setCreatingSession] = useState(false);
   const [showMobileList, setShowMobileList] = useState(false);
 
-  // Fetch all sessions
+  // Fetch all sessions — stable ref, no activeSessionId dependency
   const fetchSessions = useCallback(async (selectNewest = false) => {
     try {
       const res = await axiosInstance.get('/chat/sessions');
       const list = res.data || [];
       setSessions(list);
-      if (list.length > 0) {
-        if (selectNewest || !activeSessionId || !list.some((s) => s.id === activeSessionId)) {
-          setActiveSessionId(list[0].id);
+      setActiveSessionId((current) => {
+        if (list.length === 0) return null;
+        if (selectNewest || !current || !list.some((s) => s.id === current)) {
+          return list[0].id;
         }
-      } else {
-        setActiveSessionId(null);
-      }
+        return current;
+      });
     } catch (err) {
       console.error('Failed to load chat sessions', err);
     } finally {
       setLoadingSessions(false);
     }
-  }, [activeSessionId]);
+  }, []);
 
   useEffect(() => {
     fetchSessions();
-  }, []);
+  }, [fetchSessions]);
 
   // Create new session
   const handleNewChat = async () => {
@@ -54,17 +54,21 @@ export default function ChatPage() {
     }
   };
 
-  // Delete session
+  // Delete session — uses functional updater to avoid stale sessions closure
   const handleDeleteSession = async (e, sessionId) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this conversation?')) return;
     try {
       await axiosInstance.delete(`/chat/sessions/${sessionId}`);
-      setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-      if (activeSessionId === sessionId) {
-        const remaining = sessions.filter((s) => s.id !== sessionId);
-        setActiveSessionId(remaining.length > 0 ? remaining[0].id : null);
-      }
+      setSessions((prev) => {
+        const remaining = prev.filter((s) => s.id !== sessionId);
+        setActiveSessionId((current) =>
+          current === sessionId
+            ? remaining.length > 0 ? remaining[0].id : null
+            : current
+        );
+        return remaining;
+      });
     } catch (err) {
       console.error('Failed to delete session', err);
     }

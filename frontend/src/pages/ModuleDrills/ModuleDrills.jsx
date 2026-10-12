@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -14,6 +14,11 @@ const ScenarioDrill = ({ drill, moduleId }) => {
   const [evaluation, setEvaluation] = useState(null);
   const [showReference, setShowReference] = useState(false);
   const [evalError, setEvalError] = useState(null);
+
+  const wordCount = useMemo(
+    () => (userAnswer.trim() ? userAnswer.trim().split(/\s+/).length : 0),
+    [userAnswer]
+  );
 
   const handleCheckAnswer = async () => {
     if (!userAnswer.trim() || isEvaluating) return;
@@ -80,7 +85,7 @@ const ScenarioDrill = ({ drill, moduleId }) => {
         />
         <div className={styles.textareaFooter}>
           <span className={styles.wordCount}>
-            {userAnswer.trim() ? `${userAnswer.trim().split(/\s+/).length} words` : '0 words'}
+            {wordCount} {wordCount === 1 ? 'word' : 'words'}
           </span>
           <Button
             variant="primary"
@@ -120,8 +125,8 @@ const ScenarioDrill = ({ drill, moduleId }) => {
             <div className={styles.missingSection}>
               <div className={styles.missingHeading}>Key points to consider / expand upon:</div>
               <ul className={styles.missingList}>
-                {evaluation.missingPoints.map((pt, pIdx) => (
-                  <li key={pIdx}>{pt}</li>
+                {evaluation.missingPoints.map((pt) => (
+                  <li key={pt}>{pt}</li>
                 ))}
               </ul>
             </div>
@@ -473,7 +478,7 @@ const ModuleDrills = () => {
             <Button variant="primary" onClick={fetchDrills}>
               Retry Loading
             </Button>
-            <Button variant="outline" onClick={() => navigate(`/modules/${id}`)}>
+            <Button variant="outlined" onClick={() => navigate(`/modules/${id}`)}>
               Back to Module
             </Button>
           </div>

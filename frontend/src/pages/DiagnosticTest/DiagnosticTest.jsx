@@ -62,20 +62,16 @@ const DiagnosticTest = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
-  const formData = location.state?.formData || {
-    targetTopic: 'Full-Stack Software Engineering',
-    targetRole: 'Software Engineer',
-    hoursPerWeek: 10,
-    learningStyle: 'PRACTICAL',
-    knownSkills: [],
-    selfLevel: 'INTERMEDIATE',
-  };
+  const formData = location.state?.formData;
+  const targetTopic = formData?.targetTopic || 'Full-Stack Software Engineering';
+  const knownSkills = formData?.knownSkills || [];
 
   const [loading, setLoading] = useState(true);
   const [assessmentId, setAssessmentId] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({}); // { [questionIndex]: optionIndex }
+  const [showPartialConfirm, setShowPartialConfirm] = useState(false);
 
   // Result state
   const [submittingTest, setSubmittingTest] = useState(false);
@@ -87,10 +83,9 @@ const DiagnosticTest = () => {
     const fetchDiagnostic = async () => {
       setLoading(true);
       try {
-        const topic = formData.targetTopic || 'Software Development';
         const res = await axiosInstance.post('/assessments/diagnostic/generate', {
-          topic,
-          claimedPrerequisites: (formData.knownSkills || []).join(', '),
+          topic: targetTopic,
+          claimedPrerequisites: (knownSkills || []).join(', '),
         });
 
         if (res.data?.id && res.data?.questions?.length > 0) {
@@ -114,26 +109,22 @@ const DiagnosticTest = () => {
     };
 
     fetchDiagnostic();
-  }, [formData.targetTopic]);
+  }, [targetTopic, knownSkills]);
 
   const handleSelectOption = (optIndex) => {
     setSelectedAnswers((prev) => ({
       ...prev,
       [currentQIndex]: optIndex,
     }));
+    setShowPartialConfirm(false);
   };
 
-  // Submit the 5-question test
-  const handleSubmitTest = async () => {
+  // Submit execution logic
+  const executeSubmit = async () => {
+    setShowPartialConfirm(false);
+    setSubmittingTest(true);
     const total = questions.length;
     const answeredCount = Object.keys(selectedAnswers).length;
-    if (answeredCount < total) {
-      if (!window.confirm(`You answered ${answeredCount} of ${total} questions. Submit anyway?`)) {
-        return;
-      }
-    }
-
-    setSubmittingTest(true);
     const answersList = questions.map((_, i) =>
       selectedAnswers[i] !== undefined ? selectedAnswers[i] : 0
     );
@@ -180,16 +171,27 @@ const DiagnosticTest = () => {
     }
   };
 
+  // Submit test with partial answers check
+  const handleSubmitTest = () => {
+    const total = questions.length;
+    const answeredCount = Object.keys(selectedAnswers).length;
+    if (answeredCount < total) {
+      setShowPartialConfirm(true);
+      return;
+    }
+    executeSubmit();
+  };
+
   // Generate roadmap with assessed baseline
   const handleBuildRoadmap = async () => {
     setGeneratingRoadmap(true);
     try {
       const payload = {
-        targetTopic: formData.targetTopic,
-        targetRole: formData.targetRole || 'Software Engineer',
-        selfAssessedBaseline: result?.assessedLevel || formData.selfLevel || 'INTERMEDIATE',
-        hoursPerWeek: formData.hoursPerWeek || 10,
-        learningStyle: formData.learningStyle || 'PRACTICAL',
+        targetTopic: targetTopic,
+        targetRole: formData?.targetRole || 'Software Engineer',
+        selfAssessedBaseline: result?.assessedLevel || formData?.selfLevel || 'INTERMEDIATE',
+        hoursPerWeek: formData?.hoursPerWeek || 10,
+        learningStyle: formData?.learningStyle || 'PRACTICAL',
       };
 
       const res = await axiosInstance.post('/roadmaps/generate', payload);
@@ -256,7 +258,7 @@ const DiagnosticTest = () => {
               const letter = String.fromCharCode(65 + oIndex);
               return (
                 <button
-                  key={oIndex}
+                  key={opt}
                   type="button"
                   className={`${styles.optionBtn} ${isSelected ? styles.optionSelected : ''}`}
                   onClick={() => handleSelectOption(oIndex)}
@@ -268,13 +270,41 @@ const DiagnosticTest = () => {
             })}
           </div>
 
+          {/* Unanswered Submit Confirmation Banner */}
+          {showPartialConfirm && (
+            <div className={styles.confirmBanner} role="alert">
+              <span className={styles.confirmBannerText}>
+                ⚠️ You answered {Object.keys(selectedAnswers).length} of {questions.length} questions. Submit anyway?
+              </span>
+              <div className={styles.confirmBannerActions}>
+                <button
+                  type="button"
+                  className={styles.confirmBtn}
+                  onClick={executeSubmit}
+                >
+                  Yes, Submit
+                </button>
+                <button
+                  type="button"
+                  className={styles.cancelConfirmBtn}
+                  onClick={() => setShowPartialConfirm(false)}
+                >
+                  Review Questions
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Navigation Controls */}
           <div className={styles.footerActions}>
             <button
               type="button"
               className={`${styles.navBtn} ${styles.secondaryBtn}`}
               disabled={currentQIndex === 0}
-              onClick={() => setCurrentQIndex((prev) => Math.max(0, prev - 1))}
+              onClick={() => {
+                setShowPartialConfirm(false);
+                setCurrentQIndex((prev) => Math.max(0, prev - 1));
+              }}
             >
               ← Previous
             </button>
@@ -283,7 +313,10 @@ const DiagnosticTest = () => {
               <button
                 type="button"
                 className={`${styles.navBtn} ${styles.primaryBtn}`}
-                onClick={() => setCurrentQIndex((prev) => Math.min(questions.length - 1, prev + 1))}
+                onClick={() => {
+                  setShowPartialConfirm(false);
+                  setCurrentQIndex((prev) => Math.min(questions.length - 1, prev + 1));
+                }}
               >
                 Next Question →
               </button>

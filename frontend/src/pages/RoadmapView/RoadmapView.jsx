@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
@@ -46,7 +46,7 @@ const RoadmapView = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch full roadmap detail on mount or roadmapId change
-  const fetchRoadmapDetail = async () => {
+  const fetchRoadmapDetail = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -59,11 +59,11 @@ const RoadmapView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [roadmapId]);
 
   useEffect(() => {
     fetchRoadmapDetail();
-  }, [roadmapId]);
+  }, [fetchRoadmapDetail]);
 
   // Lazy fetch graph data when Graph tab is first selected
   useEffect(() => {
@@ -182,13 +182,13 @@ const RoadmapView = () => {
               )}
             </p>
             <div className={styles.changedChips}>
-              {roadmap.whatChanged.keptModules?.map((m, idx) => (
-                <span key={idx} className={styles.keptChip}>
+              {roadmap.whatChanged.keptModules?.map((m) => (
+                <span key={m} className={styles.keptChip}>
                   ✓ Kept: {m}
                 </span>
               ))}
-              {roadmap.whatChanged.removedModules?.map((m, idx) => (
-                <span key={idx} className={styles.removedChip}>
+              {roadmap.whatChanged.removedModules?.map((m) => (
+                <span key={m} className={styles.removedChip}>
                   ✕ Refactored: {m}
                 </span>
               ))}
@@ -350,12 +350,12 @@ const RoadmapView = () => {
             <p>Ready to level up your career or explore additional learning resources?</p>
           </div>
           <div className={styles.completeActions}>
-            <Link to="/career">
-              <Button variant="primary" size="sm">Explore Career Guidance →</Button>
-            </Link>
-            <Link to="/resources">
-              <Button variant="outlined" size="sm">Browse Recommended Resources</Button>
-            </Link>
+            <Button variant="primary" size="sm" onClick={() => navigate('/career')}>
+              Explore Career Guidance →
+            </Button>
+            <Button variant="outlined" size="sm" onClick={() => navigate('/resources')}>
+              Browse Recommended Resources
+            </Button>
           </div>
         </div>
       )}

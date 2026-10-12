@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
 import styles from './ModuleStudy.module.css';
@@ -172,10 +173,10 @@ const ModuleStudy = () => {
   if (loading) {
     return (
       <div className={styles.container}>
-        <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>📚</div>
+        <div className={styles.loadingState}>
+          <div className={styles.loadingIcon}>📚</div>
           <h3>Loading Module Teaching Materials...</h3>
-          <p style={{ color: '#6b7280' }}>Preparing concepts, code examples, and structured lessons.</p>
+          <p className={styles.loadingText}>Preparing concepts, code examples, and structured lessons.</p>
         </div>
       </div>
     );
@@ -184,13 +185,12 @@ const ModuleStudy = () => {
   if (!moduleData) {
     return (
       <div className={styles.container}>
-        <div style={{ textAlign: 'center', padding: '60px 0' }}>
+        <div className={styles.loadingState}>
           <h3>Module not found</h3>
           <button
             type="button"
             className={styles.prevModuleBtn}
             onClick={() => navigate('/roadmaps')}
-            style={{ marginTop: '16px' }}
           >
             ← Back to Roadmaps
           </button>
@@ -322,7 +322,7 @@ const ModuleStudy = () => {
                 <div
                   className={styles.contentBody}
                   dangerouslySetInnerHTML={{
-                    __html: renderMarkdownToHtml(currentPart.contentBody),
+                    __html: DOMPurify.sanitize(renderMarkdownToHtml(currentPart.contentBody)),
                   }}
                 />
 
@@ -406,8 +406,9 @@ const ModuleStudy = () => {
         /* Full Comprehensive Study Guide View */
         <div className={styles.guideContainer}>
           {guideLoading ? (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <p>Generating and loading study guide...</p>
+            <div className={styles.loadingState}>
+              <div className={styles.loadingIcon}>📖</div>
+              <p className={styles.loadingText}>Generating and loading study guide...</p>
             </div>
           ) : guideData ? (
             <div>
@@ -426,7 +427,7 @@ const ModuleStudy = () => {
               <div
                 className={styles.guideContent}
                 dangerouslySetInnerHTML={{
-                  __html: renderMarkdownToHtml(guideData.markdownContent),
+                  __html: DOMPurify.sanitize(renderMarkdownToHtml(guideData.markdownContent)),
                 }}
               />
             </div>

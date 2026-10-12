@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../services/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
@@ -36,14 +36,7 @@ const Dashboard = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // Fetch all parallel sections on mount
-  useEffect(() => {
-    fetchDashboardData();
-    fetchHeatmapData();
-    fetchPracticeDueData();
-  }, []);
-
-  const fetchDashboardData = () => {
+  const fetchDashboardData = useCallback(() => {
     setDashLoading(true);
     setDashError(null);
     axiosInstance
@@ -54,13 +47,13 @@ const Dashboard = () => {
           updateStreak(res.data.currentStreak);
         }
       })
-      .catch((err) => {
+      .catch(() => {
         setDashError('Failed to load dashboard statistics.');
       })
       .finally(() => setDashLoading(false));
-  };
+  }, []);
 
-  const fetchHeatmapData = () => {
+  const fetchHeatmapData = useCallback(() => {
     setHeatmapLoading(true);
     setHeatmapError(null);
     axiosInstance
@@ -84,9 +77,9 @@ const Dashboard = () => {
         setHeatmapError('Failed to load activity heatmap.');
       })
       .finally(() => setHeatmapLoading(false));
-  };
+  }, []);
 
-  const fetchPracticeDueData = () => {
+  const fetchPracticeDueData = useCallback(() => {
     setPracticeLoading(true);
     setPracticeError(null);
     axiosInstance
@@ -98,7 +91,14 @@ const Dashboard = () => {
         setPracticeError('Failed to load flashcards status.');
       })
       .finally(() => setPracticeLoading(false));
-  };
+  }, []);
+
+  // Fetch all parallel sections on mount
+  useEffect(() => {
+    fetchDashboardData();
+    fetchHeatmapData();
+    fetchPracticeDueData();
+  }, [fetchDashboardData, fetchHeatmapData, fetchPracticeDueData]);
 
   // Drag & Drop File Upload Handler
   const handleFileUpload = async (files) => {
