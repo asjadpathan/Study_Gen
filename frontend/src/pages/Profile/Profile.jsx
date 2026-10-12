@@ -121,8 +121,8 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
             <polygon
               key={idx}
               points={ringPoints}
-              fill={idx === rings.length - 1 ? '#f8fafc' : 'transparent'}
-              stroke="#e2e8f0"
+              fill={idx === rings.length - 1 ? 'var(--color-surface, #f8fafc)' : 'transparent'}
+              stroke="var(--color-border, #e2e8f0)"
               strokeWidth="1"
               strokeDasharray={idx < 3 ? '3 3' : 'none'}
             />
@@ -139,7 +139,7 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
               y1={centerY}
               x2={outer.x}
               y2={outer.y}
-              stroke="#cbd5e1"
+              stroke="var(--color-border, #cbd5e1)"
               strokeWidth="1"
             />
           );
@@ -148,8 +148,8 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
         {/* Filled Data Polygon */}
         <polygon
           points={polygonPointsString}
-          fill="rgba(59, 130, 246, 0.2)"
-          stroke="var(--color-primary, #3b82f6)"
+          fill="rgba(109, 40, 217, 0.22)"
+          stroke="var(--color-primary, #6d28d9)"
           strokeWidth="2.5"
           className={styles.radarPolygon}
         />
@@ -161,8 +161,8 @@ const SkillMatrixRadar = React.memo(function SkillMatrixRadar({ data }) {
             cx={p.x}
             cy={p.y}
             r="4.5"
-            fill="#ffffff"
-            stroke="var(--color-primary, #3b82f6)"
+            fill="var(--color-surface, #ffffff)"
+            stroke="var(--color-primary, #6d28d9)"
             strokeWidth="2.5"
             className={styles.radarVertex}
           >
@@ -468,7 +468,7 @@ export default function Profile() {
         {/* Metric 1: Streak */}
         <div className={styles.statCard}>
           <div className={styles.statTop}>
-            <span className={styles.statIcon} style={{ background: '#fff7ed', color: '#ea580c' }}>
+            <span className={`${styles.statIcon} ${styles.statIconStreak}`}>
               🔥
             </span>
             <span className={styles.statLabel}>Current Streak</span>
@@ -486,7 +486,7 @@ export default function Profile() {
         {/* Metric 2: Study Hours */}
         <div className={styles.statCard}>
           <div className={styles.statTop}>
-            <span className={styles.statIcon} style={{ background: '#eff6ff', color: '#2563eb' }}>
+            <span className={`${styles.statIcon} ${styles.statIconHours}`}>
               ⏱️
             </span>
             <span className={styles.statLabel}>Focused Study</span>
@@ -504,7 +504,7 @@ export default function Profile() {
         {/* Metric 3: Active Roadmaps */}
         <div className={styles.statCard}>
           <div className={styles.statTop}>
-            <span className={styles.statIcon} style={{ background: '#f5f3ff', color: '#7c3aed' }}>
+            <span className={`${styles.statIcon} ${styles.statIconRoadmaps}`}>
               🗺️
             </span>
             <span className={styles.statLabel}>Active Roadmaps</span>
@@ -522,7 +522,7 @@ export default function Profile() {
         {/* Metric 4: Modules Completed */}
         <div className={styles.statCard}>
           <div className={styles.statTop}>
-            <span className={styles.statIcon} style={{ background: '#ecfdf5', color: '#059669' }}>
+            <span className={`${styles.statIcon} ${styles.statIconModules}`}>
               📚
             </span>
             <span className={styles.statLabel}>Modules Mastered</span>
@@ -540,7 +540,7 @@ export default function Profile() {
         {/* Metric 5: Passed Tests */}
         <div className={styles.statCard}>
           <div className={styles.statTop}>
-            <span className={styles.statIcon} style={{ background: '#fdf2f8', color: '#db2777' }}>
+            <span className={`${styles.statIcon} ${styles.statIconTests}`}>
               🎯
             </span>
             <span className={styles.statLabel}>Passed Tests</span>
@@ -558,7 +558,7 @@ export default function Profile() {
         {/* Metric 6: Mastery Velocity */}
         <div className={styles.statCard}>
           <div className={styles.statTop}>
-            <span className={styles.statIcon} style={{ background: '#f0fdfa', color: '#0d9488' }}>
+            <span className={`${styles.statIcon} ${styles.statIconVelocity}`}>
               ⚡
             </span>
             <span className={styles.statLabel}>Mastery Velocity</span>
@@ -576,7 +576,7 @@ export default function Profile() {
         {/* Metric 7: Badges Earned */}
         <div className={styles.statCard}>
           <div className={styles.statTop}>
-            <span className={styles.statIcon} style={{ background: '#fffbeb', color: '#d97706' }}>
+            <span className={`${styles.statIcon} ${styles.statIconBadges}`}>
               🏆
             </span>
             <span className={styles.statLabel}>Badges Earned</span>
