@@ -626,19 +626,47 @@ public class TeachingContentService {
         return generateFallbackLearnMore(roadmapTopic, module.getTitle(), partTitle, partLevel, contentBody);
     }
 
+    private String resolveApiKey() {
+        if (this.geminiApiKey != null && !this.geminiApiKey.isBlank() && !this.geminiApiKey.startsWith("${")) {
+            return this.geminiApiKey.trim();
+        }
+        String sysProp = System.getProperty("GOOGLE_GENAI_API_KEY");
+        if (sysProp != null && !sysProp.isBlank()) {
+            return sysProp.trim();
+        }
+        String envVal = System.getenv("GOOGLE_GENAI_API_KEY");
+        if (envVal != null && !envVal.isBlank()) {
+            return envVal.trim();
+        }
+        String geminiEnv = System.getenv("GEMINI_API_KEY");
+        if (geminiEnv != null && !geminiEnv.isBlank()) {
+            return geminiEnv.trim();
+        }
+        for (String path : List.of(".env", "backend/.env", "../.env")) {
+            try {
+                java.io.File f = new java.io.File(path);
+                if (f.exists() && f.isFile()) {
+                    for (String line : java.nio.file.Files.readAllLines(f.toPath())) {
+                        line = line.trim();
+                        if (line.startsWith("GOOGLE_GENAI_API_KEY=")) {
+                            String k = line.substring("GOOGLE_GENAI_API_KEY=".length()).trim();
+                            if (!k.isBlank()) return k;
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+        return null;
+    }
+
     private ModuleLearnMoreResponse callGeminiForLearnMore(String topic, String moduleTitle, String partTitle, String partLevel, String contentBody) {
         try {
-            String apiKey = (this.geminiApiKey != null && !this.geminiApiKey.isBlank())
-                    ? this.geminiApiKey
-                    : System.getenv("GOOGLE_GENAI_API_KEY");
+            String apiKey = resolveApiKey();
             if (apiKey == null || apiKey.isBlank()) {
                 return null;
             }
 
-            String model = (this.geminiModel != null && !this.geminiModel.isBlank())
-                    ? this.geminiModel
-                    : "gemini-3.6-flash";
-
+            String model = "gemini-3.8-flash";
             String url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + apiKey;
 
             String prompt = """
