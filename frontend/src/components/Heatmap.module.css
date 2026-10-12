@@ -11,6 +11,7 @@
   max-width: 100%;
   box-sizing: border-box;
   min-width: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .embeddedCard {
@@ -173,7 +174,7 @@
 .calendarViewportContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.75rem;
   width: 100%;
 }
 
@@ -249,54 +250,47 @@
 
 .todayBtn {
   background: #eff6ff;
-  color: #1d4ed8;
+  color: #2563eb;
   border-color: #bfdbfe;
 }
 
 .todayBtn:hover:not(:disabled) {
   background: #dbeafe;
-  color: #1e40af;
-  border-color: #93c5fd;
+  color: #1d4ed8;
 }
 
 .todayBtnCurrent {
-  background: #f8fafc;
-  color: #64748b;
-  border-color: #e2e8f0;
-  font-weight: 500;
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
 }
 
-/* Calendar Container & Horizontal Scroll Wrapper */
+.todayBtnCurrent:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+/* Scroll Wrapper */
 .scrollWrapper {
-  width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: hidden;
+  width: 100%;
+  padding-bottom: 8px;
   scroll-behavior: smooth;
-  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* 6-Month View Constrained to approx 26 weeks with smooth horizontal scroll */
-.sixMonthView {
-  max-width: min(100%, 535px);
-  border: 1px solid var(--color-neutral-200, #e2e8f0);
-  border-radius: 12px;
-  padding: 0.75rem 0.85rem;
-  background: var(--color-neutral-50, #f8fafc);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
-}
-
-/* Scrollbar polish */
 .scrollWrapper::-webkit-scrollbar {
   height: 6px;
 }
 
 .scrollWrapper::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--color-neutral-100, #f1f5f9);
   border-radius: 3px;
 }
 
 .scrollWrapper::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-neutral-300, #cbd5e1);
   border-radius: 3px;
 }
 
@@ -304,21 +298,23 @@
   background: #94a3b8;
 }
 
+/* Calendar Container */
 .calendarContainer {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
   width: fit-content;
   min-width: 100%;
 }
 
-/* Weekday Labels */
+/* Weekday Labels (Mon, Wed, Fri aligned with 7 rows) */
 .weekdayLabels {
   display: grid;
   grid-template-rows: repeat(7, 13px);
   gap: 3.5px;
-  padding-top: 20px; /* offset for month headers */
   user-select: none;
+  flex-shrink: 0;
+  padding-top: 1px;
 }
 
 .weekdayLabel {
@@ -331,44 +327,52 @@
   padding-right: 4px;
 }
 
-/* Columns */
-.columnsWrapper {
+/* Months Wrapper: Grouped Month blocks side by side with clean month gap */
+.monthsWrapper {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.monthHeaderRow {
-  display: flex;
-  gap: 3.5px;
-  height: 16px;
+  align-items: flex-start;
+  gap: 14px; /* Distinct gap between month clusters */
   user-select: none;
 }
 
-.monthHeaderCell {
-  width: 13px;
-  position: relative;
+/* Month Group */
+.monthGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
-.monthLabel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--color-neutral-500, #64748b);
-  white-space: nowrap;
-}
-
-.weeksGrid {
+/* Month Weeks Grid (columns within the same month) */
+.monthWeeksGrid {
   display: flex;
   gap: 3.5px;
 }
 
+/* Week Column: 7 rows of days */
 .weekCol {
   display: grid;
   grid-template-rows: repeat(7, 13px);
   gap: 3.5px;
+}
+
+/* Month Footer with label */
+.monthFooter {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.monthLabelText {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2563eb;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  user-select: none;
+  transition: color 0.15s ease;
 }
 
 /* Activity Squares */
@@ -384,10 +388,15 @@
 .square:hover {
   transform: scale(1.35);
   z-index: 20;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-.squareHidden {
+.squarePlaceholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.squareFuture {
   visibility: hidden;
   pointer-events: none;
 }
@@ -397,7 +406,7 @@
   outline-offset: 1px;
 }
 
-/* Intensity levels */
+/* Intensity levels - Light Mode */
 .level0 {
   background-color: #f1f5f9;
   border: 1px solid #e2e8f0;
@@ -423,6 +432,166 @@
   border: 1px solid #1e40af;
 }
 
+/* =========================================================
+   DARK THEME STYLES (Matches LeetCode / Dark Mode Screenshot)
+   ========================================================= */
+[data-theme='dark'] .heatmapCard,
+:global(.dark-theme) .heatmapCard {
+  background-color: #18181b;
+  border-color: #27272a;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] .title,
+:global(.dark-theme) .title {
+  color: #f4f4f5;
+}
+
+[data-theme='dark'] .statusInactive,
+:global(.dark-theme) .statusInactive {
+  background: #27272a;
+  color: #a1a1aa;
+  border-color: #3f3f46;
+}
+
+[data-theme='dark'] .statusActive,
+:global(.dark-theme) .statusActive {
+  background: #064e3b;
+  color: #6ee7b7;
+  border-color: #047857;
+}
+
+[data-theme='dark'] .metricPill,
+:global(.dark-theme) .metricPill {
+  background: #27272a;
+  color: #e4e4e7;
+  border-color: #3f3f46;
+}
+
+[data-theme='dark'] .viewToggleGroup,
+:global(.dark-theme) .viewToggleGroup {
+  background: #27272a;
+  border-color: #3f3f46;
+}
+
+[data-theme='dark'] .viewToggleBtn,
+:global(.dark-theme) .viewToggleBtn {
+  color: #a1a1aa;
+}
+
+[data-theme='dark'] .viewToggleBtn:hover,
+:global(.dark-theme) .viewToggleBtn:hover {
+  color: #ffffff;
+}
+
+[data-theme='dark'] .viewToggleActive,
+:global(.dark-theme) .viewToggleActive {
+  background: #3f3f46;
+  color: #38bdf8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] .legend,
+:global(.dark-theme) .legend {
+  background: #27272a;
+  border-color: #3f3f46;
+}
+
+[data-theme='dark'] .legendLabel,
+:global(.dark-theme) .legendLabel {
+  color: #a1a1aa;
+}
+
+[data-theme='dark'] .rangeText,
+:global(.dark-theme) .rangeText {
+  color: #d4d4d8;
+}
+
+[data-theme='dark'] .scrollBtn,
+:global(.dark-theme) .scrollBtn {
+  background: #27272a;
+  color: #e4e4e7;
+  border-color: #3f3f46;
+}
+
+[data-theme='dark'] .scrollBtn:hover:not(:disabled),
+:global(.dark-theme) .scrollBtn:hover:not(:disabled) {
+  background: #3f3f46;
+  color: #ffffff;
+}
+
+[data-theme='dark'] .todayBtn,
+:global(.dark-theme) .todayBtn {
+  background: #1e293b;
+  color: #38bdf8;
+  border-color: #0284c7;
+}
+
+[data-theme='dark'] .todayBtnCurrent,
+:global(.dark-theme) .todayBtnCurrent {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+[data-theme='dark'] .weekdayLabel,
+:global(.dark-theme) .weekdayLabel {
+  color: #71717a;
+}
+
+/* Month labels in dark mode: crisp light-blue/cyan text like screenshot */
+[data-theme='dark'] .monthLabelText,
+:global(.dark-theme) .monthLabelText {
+  color: #38bdf8;
+}
+
+/* Dark Mode Intensity levels */
+[data-theme='dark'] .level0,
+:global(.dark-theme) .level0 {
+  background-color: #27272a;
+  border: 1px solid #333338;
+}
+
+[data-theme='dark'] .level1,
+:global(.dark-theme) .level1 {
+  background-color: #1e3a8a;
+  border: 1px solid #1d4ed8;
+}
+
+[data-theme='dark'] .level2,
+:global(.dark-theme) .level2 {
+  background-color: #2563eb;
+  border: 1px solid #3b82f6;
+}
+
+[data-theme='dark'] .level3,
+:global(.dark-theme) .level3 {
+  background-color: #3b82f6;
+  border: 1px solid #60a5fa;
+}
+
+[data-theme='dark'] .level4,
+:global(.dark-theme) .level4 {
+  background-color: #60a5fa;
+  border: 1px solid #93c5fd;
+}
+
+[data-theme='dark'] .squareToday,
+:global(.dark-theme) .squareToday {
+  outline: 1.5px solid #38bdf8;
+  outline-offset: 1px;
+}
+
+[data-theme='dark'] .scrollWrapper::-webkit-scrollbar-track,
+:global(.dark-theme) .scrollWrapper::-webkit-scrollbar-track {
+  background: #27272a;
+}
+
+[data-theme='dark'] .scrollWrapper::-webkit-scrollbar-thumb,
+:global(.dark-theme) .scrollWrapper::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+}
+
 /* Floating Tooltip */
 .tooltip {
   position: fixed;
@@ -432,11 +601,12 @@
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
   font-size: 0.78rem;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
   pointer-events: none;
   z-index: 9999;
   white-space: nowrap;
   animation: fadeIn 0.15s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tooltipDate {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import styles from './Heatmap.module.css';
 
 // Format a date object to 'YYYY-MM-DD' using local timezone
@@ -26,114 +26,159 @@ const Heatmap = ({
 
   const scrollWrapperRef = useRef(null);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = useMemo(() => {
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t;
+  }, []);
 
   // Build lookup map for fast date access
-  const activityMap = new Map();
-  if (Array.isArray(data)) {
-    data.forEach((item) => {
-      const dateStr = item.loggedDate || item.date;
-      if (dateStr) {
-        const mins = item.minutesLogged ?? item.totalMinutes ?? item.minutes ?? 0;
-        const acts = item.activityCount ?? item.count ?? item.activities ?? (mins > 0 ? 1 : 0);
-        activityMap.set(dateStr, {
-          activities: acts,
-          minutes: mins,
-          intensity: item.intensityLevel,
-        });
-      }
-    });
-  }
-
-  // Calculate calendar grid ending on today
-  const dayOfWeek = today.getDay(); // 0 = Sun, 1 = Mon ... 6 = Sat
-  const numWeeks = Math.max(8, Math.ceil((days + dayOfWeek) / 7));
-
-  const startDate = new Date(today);
-  startDate.setDate(today.getDate() - ((numWeeks - 1) * 7 + dayOfWeek));
-
-  const columns = [];
-  let computedActiveDays = 0;
-  let computedTotalMinutes = 0;
-  let computedTodayMins = 0;
-
-  let lastMonth = null;
-
-  for (let w = 0; w < numWeeks; w++) {
-    const weekCells = [];
-    let weekMonth = null;
-
-    const weekStartDate = new Date(startDate);
-    weekStartDate.setDate(startDate.getDate() + (w * 7));
-    const currentMonth = weekStartDate.toLocaleString('default', { month: 'short' });
-    if (currentMonth !== lastMonth) {
-      weekMonth = currentMonth;
-      lastMonth = currentMonth;
+  const activityMap = useMemo(() => {
+    const map = new Map();
+    if (Array.isArray(data)) {
+      data.forEach((item) => {
+        const dateStr = item.loggedDate || item.date;
+        if (dateStr) {
+          const mins = item.minutesLogged ?? item.totalMinutes ?? item.minutes ?? 0;
+          const acts = item.activityCount ?? item.count ?? item.activities ?? (mins > 0 ? 1 : 0);
+          map.set(dateStr, {
+            activities: acts,
+            minutes: mins,
+            intensity: item.intensityLevel,
+          });
+        }
+      });
     }
+    return map;
+  }, [data]);
 
-    for (let d = 0; d < 7; d++) {
-      const cellDate = new Date(startDate);
-      cellDate.setDate(startDate.getDate() + (w * 7 + d));
-      const dateStr = formatLocalDate(cellDate);
-      const isFuture = cellDate > today;
-      const isToday = cellDate.getTime() === today.getTime();
+  // Generate month-divided calendar data
+  // Each month starts on a new column/line with its own group of weeks
+  const { monthsData, computedStats } = useMemo(() => {
+    const numMonths = viewMode === '6m' ? 6 : 12;
+    const currentYear = today.getFullYear();
+    const currentMonthIdx = today.getMonth(); // 0 = Jan, 11 = Dec
 
-      if (isFuture) {
-        weekCells.push({
-          date: dateStr,
-          isFuture: true,
-          level: 0,
-          activities: 0,
-          minutes: 0,
+    let activeDaysCount = 0;
+    let totalMinutesCount = 0;
+    let todayMinsCount = 0;
+
+    const months = [];
+
+    for (let i = numMonths - 1; i >= 0; i--) {
+      let targetMonthIdx = currentMonthIdx - i;
+      let targetYear = currentYear;
+      while (targetMonthIdx < 0) {
+        targetMonthIdx += 12;
+        targetYear -= 1;
+      }
+
+      const firstOfMonth = new Date(targetYear, targetMonthIdx, 1);
+      const monthName = firstOfMonth.toLocaleString('default', { month: 'short' });
+      const fullMonthName = firstOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+      const firstDayOfWeek = firstOfMonth.getDay(); // 0 = Sun, 1 = Mon ... 6 = Sat
+      const daysInMonth = new Date(targetYear, targetMonthIdx + 1, 0).getDate();
+
+      const weeks = [];
+      let currentDay = 1;
+      let weekIdx = 0;
+
+      while (currentDay <= daysInMonth) {
+        const weekCells = [];
+        for (let d = 0; d < 7; d++) {
+          // Pre-month padding in first week
+          if (weekIdx === 0 && d < firstDayOfWeek) {
+            weekCells.push({
+              isPlaceholder: true,
+              level: 0,
+            });
+            continue;
+          }
+
+          // Post-month padding in final week
+          if (currentDay > daysInMonth) {
+            weekCells.push({
+              isPlaceholder: true,
+              level: 0,
+            });
+            continue;
+          }
+
+          // Real date within this month
+          const cellDate = new Date(targetYear, targetMonthIdx, currentDay);
+          cellDate.setHours(0, 0, 0, 0);
+          const dateStr = formatLocalDate(cellDate);
+          const isFuture = cellDate.getTime() > today.getTime();
+          const isToday = cellDate.getTime() === today.getTime();
+
+          const entry = activityMap.get(dateStr) || { activities: 0, minutes: 0, intensity: undefined };
+
+          let level = entry.intensity;
+          if (level === undefined || level === null) {
+            if (entry.minutes >= 60) level = 4;
+            else if (entry.minutes >= 35) level = 3;
+            else if (entry.minutes >= 15) level = 2;
+            else if (entry.minutes > 0 || entry.activities > 0) level = 1;
+            else level = 0;
+          }
+
+          if (entry.minutes > 0 || entry.activities > 0) {
+            activeDaysCount++;
+            totalMinutesCount += entry.minutes;
+          }
+
+          if (isToday) {
+            todayMinsCount = entry.minutes;
+          }
+
+          weekCells.push({
+            date: dateStr,
+            dateObj: cellDate,
+            dayNumber: currentDay,
+            isPlaceholder: false,
+            isFuture,
+            isToday,
+            level: Math.min(4, Math.max(0, level)),
+            activities: entry.activities,
+            minutes: entry.minutes,
+          });
+
+          currentDay++;
+        }
+
+        weeks.push({
+          weekIndex: weekIdx,
+          cells: weekCells,
         });
-        continue;
+        weekIdx++;
       }
 
-      const entry = activityMap.get(dateStr) || { activities: 0, minutes: 0, intensity: undefined };
-
-      let level = entry.intensity;
-      if (level === undefined || level === null) {
-        if (entry.minutes >= 60) level = 4;
-        else if (entry.minutes >= 35) level = 3;
-        else if (entry.minutes >= 15) level = 2;
-        else if (entry.minutes > 0 || entry.activities > 0) level = 1;
-        else level = 0;
-      }
-
-      if (entry.minutes > 0 || entry.activities > 0) {
-        computedActiveDays++;
-        computedTotalMinutes += entry.minutes;
-      }
-
-      if (isToday) {
-        computedTodayMins = entry.minutes;
-      }
-
-      weekCells.push({
-        date: dateStr,
-        dateObj: cellDate,
-        isFuture: false,
-        isToday,
-        level: Math.min(4, Math.max(0, level)),
-        activities: entry.activities,
-        minutes: entry.minutes,
+      months.push({
+        key: `${targetYear}-${targetMonthIdx}`,
+        year: targetYear,
+        monthIndex: targetMonthIdx,
+        name: monthName,
+        fullName: fullMonthName,
+        weeks,
       });
     }
 
-    columns.push({
-      weekIndex: w,
-      monthLabel: weekMonth,
-      cells: weekCells,
-    });
-  }
+    return {
+      monthsData: months,
+      computedStats: {
+        activeDays: activeDaysCount,
+        totalMinutes: totalMinutesCount,
+        todayMins: todayMinsCount,
+      },
+    };
+  }, [today, activityMap, viewMode]);
 
   // Display metrics
   const displayStreak = currentStreak !== undefined ? currentStreak : 0;
-  const displayActiveDays = totalActiveDays !== undefined ? totalActiveDays : computedActiveDays;
-  const displayTodayMins = todayMinutes !== undefined ? todayMinutes : computedTodayMins;
+  const displayActiveDays = totalActiveDays !== undefined ? totalActiveDays : computedStats.activeDays;
+  const displayTodayMins = todayMinutes !== undefined ? todayMinutes : computedStats.todayMins;
   const activeToday = displayTodayMins > 0;
-  const displayHours = (computedTotalMinutes / 60).toFixed(1);
+  const displayHours = (computedStats.totalMinutes / 60).toFixed(1);
 
   // Scroll position updater
   const updateScrollState = useCallback(() => {
@@ -151,7 +196,7 @@ const Heatmap = ({
     }
   }, []);
 
-  // Initial and reactive auto-scroll to today (the latest 6 months)
+  // Auto-scroll to today on viewMode change and initial mount
   useEffect(() => {
     const scrollToToday = () => {
       if (scrollWrapperRef.current) {
@@ -164,7 +209,7 @@ const Heatmap = ({
     scrollToToday();
     const timer = setTimeout(scrollToToday, 60);
     return () => clearTimeout(timer);
-  }, [columns.length, viewMode, updateScrollState]);
+  }, [monthsData.length, viewMode, updateScrollState]);
 
   const handleScroll = () => {
     if (hoveredCell) setHoveredCell(null);
@@ -185,7 +230,7 @@ const Heatmap = ({
   };
 
   const handleMouseEnter = (cell, e) => {
-    if (cell.isFuture) return;
+    if (cell.isPlaceholder || cell.isFuture) return;
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltipPos({
       x: rect.left + rect.width / 2,
@@ -198,13 +243,12 @@ const Heatmap = ({
     setHoveredCell(null);
   };
 
-  const hasMultiMonthHistory = numWeeks > 26;
   const isViewingToday = scrollPosition === 'end';
   const canScrollLeft = scrollPosition !== 'start' && scrollPosition !== 'all';
 
   return (
     <div className={`${styles.heatmapCard} ${embedded ? styles.embeddedCard : ''}`}>
-      {/* Top Header with Title and Status Badges */}
+      {/* Top Header with Title, Metrics, and Mode Toggles */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           {showTitle && (
@@ -242,24 +286,22 @@ const Heatmap = ({
 
         <div className={styles.headerRight}>
           {/* View Mode Toggle (6M vs Full Year) */}
-          {hasMultiMonthHistory && (
-            <div className={styles.viewToggleGroup} title="Toggle between 6-month scrollable view and full year">
-              <button
-                type="button"
-                className={`${styles.viewToggleBtn} ${viewMode === '6m' ? styles.viewToggleActive : ''}`}
-                onClick={() => setViewMode('6m')}
-              >
-                6 Months
-              </button>
-              <button
-                type="button"
-                className={`${styles.viewToggleBtn} ${viewMode === '12m' ? styles.viewToggleActive : ''}`}
-                onClick={() => setViewMode('12m')}
-              >
-                Full Year
-              </button>
-            </div>
-          )}
+          <div className={styles.viewToggleGroup} title="Toggle between 6-month view and full year">
+            <button
+              type="button"
+              className={`${styles.viewToggleBtn} ${viewMode === '6m' ? styles.viewToggleActive : ''}`}
+              onClick={() => setViewMode('6m')}
+            >
+              6 Months
+            </button>
+            <button
+              type="button"
+              className={`${styles.viewToggleBtn} ${viewMode === '12m' ? styles.viewToggleActive : ''}`}
+              onClick={() => setViewMode('12m')}
+            >
+              Full Year
+            </button>
+          </div>
 
           {/* Legend */}
           <div className={styles.legend}>
@@ -274,94 +316,92 @@ const Heatmap = ({
         </div>
       </div>
 
-      {/* Calendar Area with Scroll Navigation Banner */}
+      {/* Calendar Viewport with Navigation Bar */}
       <div className={styles.calendarViewportContainer}>
-        {hasMultiMonthHistory && (
-          <div className={styles.navBar}>
-            <div className={styles.rangeIndicator}>
-              <span className={`${styles.rangeDot} ${isViewingToday ? styles.rangeDotLive : ''}`} />
-              <span className={styles.rangeText}>
-                {scrollPosition === 'end'
-                  ? 'Showing: Last 6 Months (Ending Today)'
-                  : scrollPosition === 'start'
-                  ? 'Showing: Earlier Months of Year'
-                  : 'Showing: Previous Months of Heatmap'}
-              </span>
-            </div>
-
-            <div className={styles.navControls}>
-              <button
-                type="button"
-                className={`${styles.scrollBtn} ${!canScrollLeft ? styles.scrollBtnDisabled : ''}`}
-                onClick={handleScrollLeft}
-                disabled={!canScrollLeft}
-                title="Scroll left to see previous heatmap history"
-              >
-                ◀ Previous Months
-              </button>
-
-              <button
-                type="button"
-                className={`${styles.scrollBtn} ${styles.todayBtn} ${isViewingToday ? styles.todayBtnCurrent : ''}`}
-                onClick={handleScrollToToday}
-                title="Scroll back to recent 6 months (today)"
-              >
-                {isViewingToday ? 'Today ✓' : 'Today ▶'}
-              </button>
-            </div>
+        <div className={styles.navBar}>
+          <div className={styles.rangeIndicator}>
+            <span className={`${styles.rangeDot} ${isViewingToday ? styles.rangeDotLive : ''}`} />
+            <span className={styles.rangeText}>
+              {viewMode === '6m' ? 'Showing: 6 Months Activity by Month' : 'Showing: 12 Months Activity by Month'}
+            </span>
           </div>
-        )}
 
-        {/* Week-Aligned Calendar Grid Container */}
+          <div className={styles.navControls}>
+            <button
+              type="button"
+              className={`${styles.scrollBtn} ${!canScrollLeft ? styles.scrollBtnDisabled : ''}`}
+              onClick={handleScrollLeft}
+              disabled={!canScrollLeft}
+              title="Scroll left to see earlier months"
+            >
+              ◀ Earlier
+            </button>
+
+            <button
+              type="button"
+              className={`${styles.scrollBtn} ${styles.todayBtn} ${isViewingToday ? styles.todayBtnCurrent : ''}`}
+              onClick={handleScrollToToday}
+              title="Scroll back to current month (today)"
+            >
+              {isViewingToday ? 'Today ✓' : 'Today ▶'}
+            </button>
+          </div>
+        </div>
+
+        {/* Month-Grouped Calendar Grid */}
         <div
           ref={scrollWrapperRef}
-          className={`${styles.scrollWrapper} ${viewMode === '6m' && hasMultiMonthHistory ? styles.sixMonthView : ''}`}
+          className={`${styles.scrollWrapper} ${viewMode === '6m' ? styles.sixMonthView : ''}`}
           onScroll={handleScroll}
         >
           <div className={styles.calendarContainer}>
-            {/* Weekday Labels (Mon, Wed, Fri) */}
+            {/* Weekday Labels (Mon, Wed, Fri) aligned to 7 rows */}
             <div className={styles.weekdayLabels}>
               <span className={styles.weekdayLabel} style={{ gridRow: 2 }}>Mon</span>
               <span className={styles.weekdayLabel} style={{ gridRow: 4 }}>Wed</span>
               <span className={styles.weekdayLabel} style={{ gridRow: 6 }}>Fri</span>
             </div>
 
-            {/* Columns of weeks */}
-            <div className={styles.columnsWrapper}>
-              {/* Month Labels Bar */}
-              <div className={styles.monthHeaderRow}>
-                {columns.map((col, idx) => (
-                  <div key={idx} className={styles.monthHeaderCell}>
-                    {col.monthLabel && <span className={styles.monthLabel}>{col.monthLabel}</span>}
-                  </div>
-                ))}
-              </div>
-
-              {/* Weeks Grid */}
-              <div className={styles.weeksGrid}>
-                {columns.map((col, colIdx) => (
-                  <div key={colIdx} className={styles.weekCol}>
-                    {col.cells.map((cell, rowIdx) => (
-                      <div
-                        key={rowIdx}
-                        className={`${styles.square} ${
-                          cell.isFuture
-                            ? styles.squareHidden
-                            : `${styles[`level${cell.level}`]} ${cell.isToday ? styles.squareToday : ''}`
-                        }`}
-                        onMouseEnter={(e) => handleMouseEnter(cell, e)}
-                        onMouseLeave={handleMouseLeave}
-                      />
+            {/* Months Row: each month has its own group with a gap and label at bottom */}
+            <div className={styles.monthsWrapper}>
+              {monthsData.map((month) => (
+                <div key={month.key} className={styles.monthGroup}>
+                  {/* Weeks grid for this month */}
+                  <div className={styles.monthWeeksGrid}>
+                    {month.weeks.map((week, wIdx) => (
+                      <div key={wIdx} className={styles.weekCol}>
+                        {week.cells.map((cell, rIdx) => (
+                          <div
+                            key={rIdx}
+                            className={`${styles.square} ${
+                              cell.isPlaceholder
+                                ? styles.squarePlaceholder
+                                : cell.isFuture
+                                ? styles.squareFuture
+                                : `${styles[`level${cell.level}`]} ${cell.isToday ? styles.squareToday : ''}`
+                            }`}
+                            onMouseEnter={(e) => handleMouseEnter(cell, e)}
+                            onMouseLeave={handleMouseLeave}
+                          />
+                        ))}
+                      </div>
                     ))}
                   </div>
-                ))}
-              </div>
+
+                  {/* Month Label below the columns */}
+                  <div className={styles.monthFooter}>
+                    <span className={styles.monthLabelText} title={month.fullName}>
+                      {month.name}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Tooltip */}
+      {/* Floating Interactive Tooltip */}
       {hoveredCell && (
         <div
           className={styles.tooltip}
@@ -387,7 +427,7 @@ const Heatmap = ({
                 {(hoveredCell.activities || 1) > 1 ? 's' : ''})
               </span>
             ) : (
-              <span style={{ color: '#94a3b8' }}>No study logged</span>
+              <span style={{ color: '#94a3b8' }}>No study logged on this day</span>
             )}
           </div>
         </div>

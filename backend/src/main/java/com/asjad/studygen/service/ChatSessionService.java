@@ -333,6 +333,10 @@ public class ChatSessionService {
             Map<String, Object> body = Map.of(
                     "contents", List.of(
                             Map.of("parts", List.of(Map.of("text", promptText)))
+                    ),
+                    "generationConfig", Map.of(
+                            "maxOutputTokens", 250,
+                            "temperature", 0.3
                     )
             );
 
@@ -372,163 +376,48 @@ public class ChatSessionService {
         // 1. JAVA
         if (lower.contains("java") && !lower.contains("javascript")) {
             return """
-                    ### What is Java?
+                    **Java** is a class-based, object-oriented programming language designed for platform independence ("Write Once, Run Anywhere") via the **JVM**.
 
-                    **Java** is a high-level, class-based, object-oriented programming language designed to have as few implementation dependencies as possible. It is famous for its philosophy: **"Write Once, Run Anywhere" (WORA)**.
-
-                    #### Key Features of Java
-                    - **Platform Independence**: Java code is compiled into *bytecode* (stored in `.class` files), which runs on any operating system equipped with the **Java Virtual Machine (JVM)**.
-                    - **Object-Oriented (OOP)**: Everything in Java revolves around objects, emphasizing concepts like *Encapsulation*, *Inheritance*, *Polymorphism*, and *Abstraction*.
-                    - **Automatic Memory Management**: The Java Garbage Collector automatically deallocates memory for objects that are no longer referenced.
-                    - **Strongly Typed**: Every variable must be declared with an explicit data type, preventing type-mismatch bugs at compile time.
-                    - **Multithreading & Security**: Built-in support for concurrent execution and a robust security architecture.
-
-                    #### Simple Java Code Example
-                    ```java
-                    public class HelloWorld {
-                        public static void main(String[] args) {
-                            // Printing a message to the console
-                            System.out.println("Hello, Welcome to Java!");
-
-                            // Basic calculation
-                            int number1 = 15;
-                            int number2 = 25;
-                            int sum = number1 + number2;
-
-                            System.out.println("Sum of numbers: " + sum);
-                        }
-                    }
-                    ```
-
-                    #### Where is Java Used?
-                    - **Enterprise Backend Services**: Enterprise APIs and microservices using frameworks like **Spring Boot**.
-                    - **Android Applications**: Native mobile apps.
-                    - **Big Data Systems**: Technologies like Apache Hadoop, Apache Spark, and Apache Kafka.
-                    - **Cloud Infrastructure**: Scalable banking, financial, and enterprise distributed systems.
+                    - **Core Features**: Automatic garbage collection, strong static typing, and multithreading.
+                    - **Primary Uses**: Enterprise backends (Spring Boot), Android development, and high-scale distributed systems.
                     """;
         }
 
         // 2. PYTHON OPERATORS
         if (lower.contains("operator") && lower.contains("python")) {
             return """
-                    ### Operators in Python
+                    Python operators perform operations on variables and values:
 
-                    In Python, **operators** are special symbols or keywords used to perform computations on variables and values (known as *operands*).
-
-                    #### 1. Arithmetic Operators
-                    Perform standard mathematical calculations:
-                    - `+` (Addition): `5 + 3` &rarr; `8`
-                    - `-` (Subtraction): `10 - 4` &rarr; `6`
-                    - `*` (Multiplication): `4 * 3` &rarr; `12`
-                    - `/` (Division - float): `7 / 2` &rarr; `3.5`
-                    - `//` (Floor Division - integer): `7 // 2` &rarr; `3`
-                    - `%` (Modulo - remainder): `7 % 2` &rarr; `1`
-                    - `**` (Exponentiation): `2 ** 3` &rarr; `8`
-
-                    #### 2. Comparison Operators
-                    Evaluate conditions and return `True` or `False`:
-                    - `==` (Equal to): `5 == 5` &rarr; `True`
-                    - `!=` (Not equal to): `5 != 3` &rarr; `True`
-                    - `>`, `<`, `>=`, `<=` (Greater / Less than)
-
-                    #### 3. Logical Operators
-                    Combine conditional expressions:
-                    - `and`: Returns `True` if both conditions are true
-                    - `or`: Returns `True` if at least one condition is true
-                    - `not`: Inverts the boolean value (`not True` &rarr; `False`)
-
-                    #### 4. Assignment & Membership
-                    - `=`, `+=`, `-=`: Assigns or updates a variable's value.
-                    - `in` / `not in`: Checks if an element exists within a sequence (string, list, tuple).
-
-                    #### Python Code Example
-                    ```python
-                    # Example demonstrating Python operators
-                    x = 10
-                    y = 3
-
-                    # Arithmetic
-                    print("Division:", x / y)      # 3.3333...
-                    print("Floor Div:", x // y)    # 3
-                    print("Remainder:", x % y)     # 1
-
-                    # Logical & Membership
-                    skills = ["Python", "Java", "SQL"]
-                    if "Python" in skills and x > y:
-                        print("Condition met: Python is in skills and x is greater than y!")
-                    ```
+                    - **Arithmetic**: `+`, `-`, `*`, `/`, `//` (floor div), `%` (remainder), `**` (power)
+                    - **Comparison**: `==`, `!=`, `<`, `>`, `<=`, `>=` (returns boolean)
+                    - **Logical & Membership**: `and`, `or`, `not`, and `in` / `not in`
                     """;
         }
 
         // 3. PYTHON
         if (lower.contains("python")) {
             return """
-                    ### What is Python?
+                    **Python** is a high-level, interpreted programming language known for its clear, readable syntax.
 
-                    **Python** is an interpreted, high-level, dynamically typed programming language known for its clean, readable syntax and versatility. It emphasizes code readability with its notable use of significant indentation.
-
-                    #### Key Features
-                    - **Easy to Learn & Read**: Reads closely to plain English, minimizing learning curves.
-                    - **Interpreted**: Code is executed line by line, allowing rapid prototyping.
-                    - **Dynamically Typed**: You do not need to explicitly declare variable types.
-                    - **Vast Ecosystem**: Immense library support for Web Development (Django, FastAPI), Data Science (Pandas, NumPy), and AI/ML (PyTorch, TensorFlow).
-
-                    #### Simple Python Example
-                    ```python
-                    # Simple Python script
-                    name = "StudyGen Student"
-                    print(f"Hello, {name}!")
-
-                    numbers = [1, 2, 3, 4, 5]
-                    doubled = [n * 2 for n in numbers]
-                    print("Doubled numbers:", doubled)
-                    ```
+                    - **Key Strengths**: Rapid development, dynamic typing, and beginner-friendly syntax.
+                    - **Primary Domains**: AI/Machine Learning (PyTorch), Data Science, and Web APIs (FastAPI, Django).
                     """;
         }
 
         // 4. JAVASCRIPT
         if (lower.contains("javascript") || lower.contains(" js")) {
             return """
-                    ### What is JavaScript?
+                    **JavaScript** is the foundational scripting language of the modern web, providing dynamic interactivity in browsers and scalable backend services with **Node.js**.
 
-                    **JavaScript (JS)** is the lightweight, interpreted programming language of the Web. Along with HTML and CSS, it is one of the core technologies that power modern interactive web applications.
-
-                    #### Key Features
-                    - **Client-Side Interactivity**: Runs directly in the browser to handle events, animations, and dynamic DOM updates.
-                    - **Full-Stack with Node.js**: Executes on servers (backend) as well as browsers.
-                    - **Asynchronous**: Built around an event loop with Promises and `async/await` for high-performance non-blocking I/O.
-
-                    #### Simple JavaScript Example
-                    ```javascript
-                    // Simple modern JavaScript
-                    const greet = (name) => {
-                      return `Hello, ${name}!`;
-                    };
-
-                    console.log(greet("Developer"));
-
-                    const numbers = [1, 2, 3, 4];
-                    const doubled = numbers.map(n => n * 2);
-                    console.log("Doubled:", doubled);
-                    ```
+                    - **Key Strengths**: Event-driven, asynchronous I/O with `async/await`, and universal browser support.
                     """;
         }
 
         // 5. GENERAL DIRECT ANSWER
         return """
-                ### Answer & Concept Overview
+                **%s** is an important concept in software engineering and computer science.
 
-                Here is a straightforward explanation for **%s**:
-
-                #### Core Definition
-                This topic represents a fundamental building block in software engineering and computer science. It provides structured mechanisms for organizing logic, handling state, and building reliable applications.
-
-                #### Essential Key Points
-                1. **Foundation**: Always understand the underlying rules before applying high-level shortcuts.
-                2. **Practical Application**: Apply the concept through small, incremental hands-on exercises.
-                3. **Best Practices**: Keep code clean, descriptive, and well-tested.
-
-                Feel free to ask a follow-up question or request a specific code walkthrough!
+                It provides the structural foundation for organizing application logic and managing state effectively. Let me know if you want a short 2-line snippet or a specific use-case!
                 """.formatted(query);
     }
 

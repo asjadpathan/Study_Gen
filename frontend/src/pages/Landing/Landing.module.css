@@ -1,133 +1,165 @@
+/* ============================================
+   LANDING PAGE — Creative Redesign
+   ============================================ */
+
 .landingPage {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #fafbfc;
-  color: #0f172a;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   overflow-x: hidden;
 }
 
-/* ========================================
-   COMMON SECTION HEADERS
-   ======================================== */
-.sectionHeader {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 4rem;
-}
-
-.sectionTag {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-primary, #4f46e5);
-  margin-bottom: 0.75rem;
-}
-
-.sectionTitle {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
-}
-
-.sectionSubtitle {
-  font-size: 1.05rem;
-  color: #64748b;
-  line-height: 1.6;
-}
-
-/* ========================================
-   1. HERO SECTION
-   ======================================== */
+/* ============================================
+   HERO SECTION
+   ============================================ */
 .heroSection {
-  padding: 7rem 1.5rem 5rem;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99, 102, 241, 0.12), transparent),
-    radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.5), transparent);
+  position: relative;
+  min-height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
+  padding: 6rem 1.5rem 5rem;
+  overflow: hidden;
+}
+
+/* Layered gradient blobs */
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 70%;
+  height: 80%;
+  background: radial-gradient(ellipse, rgba(109, 40, 217, 0.14) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  animation: blobDrift1 12s ease-in-out infinite alternate;
+}
+
+.heroSection::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  right: -5%;
+  width: 55%;
+  height: 65%;
+  background: radial-gradient(ellipse, rgba(13, 148, 136, 0.12) 0%, transparent 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  animation: blobDrift2 15s ease-in-out infinite alternate;
+}
+
+@keyframes blobDrift1 {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(40px, 30px) scale(1.08); }
+}
+@keyframes blobDrift2 {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-30px, -20px) scale(1.05); }
+}
+
+/* Dot-grid pattern */
+.heroDots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--color-neutral-300) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .heroDots {
+  opacity: 0.12;
 }
 
 .heroContainer {
-  max-width: 860px;
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  gap: 0;
 }
 
+/* Eyebrow pill badge */
 .heroBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.85rem;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 9999px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #334155;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 0.4rem 1rem 0.4rem 0.6rem;
+  background: linear-gradient(135deg, var(--color-primary-100), var(--color-teal-light));
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.02em;
   margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.12);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.heroBadge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(109, 40, 217, 0.18);
 }
 
 .badgePulse {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background-color: #10b981;
-  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
-  animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  animation: pulse 2.2s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
-  }
-
-  70% {
-    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-  }
-
-  100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-  }
+  0%   { box-shadow: 0 0 0 0   rgba(16, 185, 129, 0.6); }
+  70%  { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(16, 185, 129, 0); }
 }
 
+/* Main headline */
 .heroTitle {
-  font-size: 3.5rem;
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: #0f172a;
+  font-size: clamp(2.6rem, 6vw, 4.5rem);
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--color-text);
   margin-bottom: 1.5rem;
+  text-wrap: balance;
 }
 
 .gradientText {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #6d28d9 0%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
 }
 
 .heroSubtitle {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  color: #475569;
-  max-width: 660px;
-  margin-bottom: 2.5rem;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  max-width: 600px;
+  margin-bottom: 2.75rem;
 }
 
+/* CTA buttons */
 .heroActions {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 4rem;
+  margin-bottom: 4.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .ctaButton {
@@ -136,48 +168,145 @@
   gap: 0.5rem;
 }
 
-.heroMetrics {
+.ctaPrimary {
   display: inline-flex;
   align-items: center;
-  gap: 3rem;
-  padding: 1.25rem 2.5rem;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  gap: 0.6rem;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, #6d28d9, #0d9488);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(109, 40, 217, 0.35);
+  transition: all var(--transition-normal);
+  font-family: var(--font-sans);
+  text-decoration: none;
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(109, 40, 217, 0.45);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 2rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-family: var(--font-sans);
+}
+
+.ctaSecondary:hover {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+  background: var(--color-primary-50);
+}
+
+/* Metrics strip */
+.heroMetrics {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
 }
 
 .metricItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.15rem;
+  padding: 1.25rem 2rem;
+  position: relative;
+}
+
+.metricItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--color-border);
 }
 
 .metricValue {
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.02em;
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6d28d9, #0d9488);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+  font-family: var(--font-display);
 }
 
 .metricLabel {
-  font-size: 0.8rem;
-  color: #64748b;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
   font-weight: 500;
+  white-space: nowrap;
 }
 
-.metricDivider {
-  width: 1px;
-  height: 28px;
-  background-color: #f1f5f9;
+/* ============================================
+   SECTION COMMON
+   ============================================ */
+.sectionHeader {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 4rem;
 }
 
-/* ========================================
-   2. HOW IT WORKS / STEPS
-   ======================================== */
+.sectionTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-full);
+  padding: 0.3rem 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 0.85rem;
+}
+
+.sectionSubtitle {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+/* ============================================
+   2. HOW IT WORKS — Twisted Timeline
+   ============================================ */
 .howItWorksSection {
-  padding: 6rem 1.5rem;
+  padding: 7rem 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -186,61 +315,96 @@
 .stepsRail {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1.25rem;
+  gap: 1rem;
+  position: relative;
+}
+
+/* Connecting line */
+.stepsRail::before {
+  content: '';
+  position: absolute;
+  top: 2.5rem;
+  left: calc(10% + 0.5rem);
+  right: calc(10% + 0.5rem);
+  height: 2px;
+  background: linear-gradient(90deg, #6d28d9, #0d9488);
+  opacity: 0.25;
+  border-radius: 2px;
 }
 
 .stepCard {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.5rem 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 1.5rem 1.25rem 1.75rem;
   display: flex;
   flex-direction: column;
   position: relative;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  cursor: default;
 }
 
 .stepCard:hover {
-  transform: translateY(-2px);
-  border-color: #cbd5e1;
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(109, 40, 217, 0.1);
+  border-color: var(--color-primary-200);
+}
+
+.stepCard:nth-child(odd) {
+  transform-origin: center top;
+}
+
+.stepCard:nth-child(even) {
+  margin-top: 1.5rem;
+}
+
+.stepCard:nth-child(even):hover {
+  transform: translateY(-5px);
 }
 
 .stepHeader {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .stepNumber {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--color-primary, #4f46e5);
-  background-color: #eef2ff;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary-100), var(--color-teal-light));
+  border: 1px solid var(--color-primary-200);
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-full);
   display: inline-block;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
 }
 
 .stepTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
   margin-bottom: 0.5rem;
   line-height: 1.35;
 }
 
 .stepDescription {
-  font-size: 0.875rem;
-  color: #64748b;
-  line-height: 1.5;
+  font-size: 0.825rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
 }
 
-/* ========================================
-   3. FEATURES GRID
-   ======================================== */
+/* ============================================
+   3. FEATURES GRID — Bento-style
+   ============================================ */
 .featuresSection {
-  padding: 6rem 1.5rem;
-  background-color: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 7rem 1.5rem;
+  background: linear-gradient(180deg, transparent 0%, var(--color-neutral-50) 40%, transparent 100%);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-theme='dark'] .featuresSection {
+  background: linear-gradient(180deg, transparent 0%, rgba(15, 15, 26, 0.5) 40%, transparent 100%);
 }
 
 .featuresGrid {
@@ -248,63 +412,149 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .featureCard {
-  background-color: #fafbfc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  transition: all 0.2s ease;
+  gap: 0.5rem;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.featureCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.03), rgba(13, 148, 136, 0.03));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  border-radius: inherit;
+}
+
+.featureCard:hover::before {
+  opacity: 1;
 }
 
 .featureCard:hover {
-  background-color: #ffffff;
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
+  border-color: var(--color-primary-200);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(109, 40, 217, 0.08);
+}
+
+/* Make first card span 2 columns for visual variety */
+.featureCard:first-child {
+  grid-column: span 2;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 
 .iconCircle {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 10px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: var(--color-primary, #4f46e5);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-primary-100), var(--color-teal-light));
+  border: 1px solid var(--color-primary-200);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.25rem;
+  flex-shrink: 0;
+  transition: transform var(--transition-spring);
+}
+
+.featureCard:hover .iconCircle {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.featureContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .featureTitle {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
 }
 
 .featureDescription {
-  font-size: 0.9rem;
-  color: #64748b;
-  line-height: 1.55;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
 }
 
-/* ========================================
-   4. FINAL CTA BAND
-   ======================================== */
+/* ============================================
+   4. FINAL CTA — Dual Light & Dark Mode Support
+   ============================================ */
 .ctaBandSection {
   width: 100%;
-  background-color: #0f172a;
-  color: #ffffff;
-  padding: 6rem 1.5rem;
+  position: relative;
+  padding: 7rem 1.5rem;
   text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5f3ff 0%, #eef2ff 50%, #f0fdfa 100%);
+  border-top: 1px solid rgba(109, 40, 217, 0.1);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  transition: background var(--transition-normal), border-color var(--transition-normal);
+}
+
+.ctaBandSection::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 120%;
+  background: radial-gradient(ellipse, rgba(109, 40, 217, 0.15) 0%, rgba(13, 148, 136, 0.1) 40%, transparent 70%);
+  pointer-events: none;
+  filter: blur(30px);
+}
+
+/* Animated grid lines in CTA */
+.ctaBandSection::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(109, 40, 217, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(109, 40, 217, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+:global([data-theme='dark']) .ctaBandSection,
+:global(.dark-theme) .ctaBandSection {
+  background: linear-gradient(135deg, #0f0720 0%, #0a1628 50%, #061a18 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+:global([data-theme='dark']) .ctaBandSection::before,
+:global(.dark-theme) .ctaBandSection::before {
+  background: radial-gradient(ellipse, rgba(109, 40, 217, 0.35) 0%, rgba(13, 148, 136, 0.2) 40%, transparent 70%);
+}
+
+:global([data-theme='dark']) .ctaBandSection::after,
+:global(.dark-theme) .ctaBandSection::after {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
 }
 
 .ctaBandContainer {
+  position: relative;
+  z-index: 1;
   max-width: 680px;
   margin: 0 auto;
   display: flex;
@@ -313,77 +563,152 @@
 }
 
 .ctaBandTitle {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 900;
+  color: #0f172a;
   margin-bottom: 1rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  text-wrap: balance;
+  transition: color var(--transition-normal);
+}
+
+:global([data-theme='dark']) .ctaBandTitle,
+:global(.dark-theme) .ctaBandTitle {
+  color: #ffffff;
+}
+
+.ctaBandTitleGradient {
+  background: linear-gradient(135deg, #6d28d9 0%, #0d9488 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:global([data-theme='dark']) .ctaBandTitleGradient,
+:global(.dark-theme) .ctaBandTitleGradient {
+  background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .ctaBandSubtitle {
-  font-size: 1.1rem;
-  color: #94a3b8;
-  margin-bottom: 2rem;
-  line-height: 1.5;
+  font-size: 1.05rem;
+  color: #475569;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  transition: color var(--transition-normal);
 }
 
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
-@media (max-width: 1024px) {
-  .heroTitle {
-    font-size: 2.75rem;
-  }
+:global([data-theme='dark']) .ctaBandSubtitle,
+:global(.dark-theme) .ctaBandSubtitle {
+  color: rgba(255, 255, 255, 0.6);
+}
 
+.ctaBandAction {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ctaBandPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 2.25rem;
+  background: linear-gradient(135deg, #6d28d9, #0d9488);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(109, 40, 217, 0.35);
+  transition: all var(--transition-normal);
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+.ctaBandPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(109, 40, 217, 0.5);
+  filter: brightness(1.06);
+}
+
+:global([data-theme='dark']) .ctaBandPrimary,
+:global(.dark-theme) .ctaBandPrimary {
+  background: linear-gradient(135deg, #a78bfa, #2dd4bf);
+  color: #0f0720;
+  box-shadow: 0 4px 24px rgba(167, 139, 250, 0.4);
+}
+
+:global([data-theme='dark']) .ctaBandPrimary:hover,
+:global(.dark-theme) .ctaBandPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(167, 139, 250, 0.55);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
   .stepsRail {
     grid-template-columns: repeat(2, 1fr);
   }
+  .stepsRail::before { display: none; }
+  .stepCard:nth-child(even) { margin-top: 0; }
 
   .featuresGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .featureCard:first-child {
+    grid-column: span 2;
   }
 }
 
 @media (max-width: 640px) {
   .heroSection {
-    padding: 5rem 1rem 3.5rem;
+    padding: 5rem 1.25rem 3.5rem;
+    min-height: auto;
   }
-
   .heroTitle {
-    font-size: 2.15rem;
+    font-size: 2.2rem;
   }
-
   .heroSubtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
-
   .heroActions {
     flex-direction: column;
     width: 100%;
   }
-
-  .heroActions button {
+  .ctaPrimary, .ctaSecondary {
     width: 100%;
+    justify-content: center;
   }
-
   .heroMetrics {
     flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.25rem;
+    border-radius: 16px;
     width: 100%;
   }
-
-  .metricDivider {
+  .metricItem:not(:last-child)::after {
+    right: auto;
+    bottom: 0;
+    top: auto;
+    left: 20%;
     width: 60%;
     height: 1px;
   }
-
-  .stepsRail,
-  .featuresGrid {
+  .stepsRail, .featuresGrid {
     grid-template-columns: 1fr;
   }
-
+  .featureCard:first-child {
+    grid-column: span 1;
+    flex-direction: column;
+  }
   .ctaBandTitle {
-    font-size: 1.75rem;
+    font-size: 1.85rem;
   }
 }
