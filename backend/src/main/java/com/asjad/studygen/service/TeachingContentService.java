@@ -1,14 +1,32 @@
 package com.asjad.studygen.service;
 
 import com.asjad.studygen.controller.ModuleController.ModuleSubPartDTO;
+import com.asjad.studygen.dto.roadmap.InterviewQnADTO;
+import com.asjad.studygen.dto.roadmap.LearnMoreRequest;
+import com.asjad.studygen.dto.roadmap.ModuleLearnMoreResponse;
 import com.asjad.studygen.entity.Module;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TeachingContentService {
+
+    @Value("${gemini.api.key:}")
+    private String geminiApiKey;
+
+    @Value("${gemini.model:gemini-3.6-flash}")
+    private String geminiModel;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private RestClient restClient;
 
     public List<Module> buildCurriculumForTopic(String topic) {
         String lower = topic.toLowerCase();
@@ -586,4 +604,481 @@ public class TeachingContentService {
 
         return new ModuleSubPartDTO(3L, title, "ADVANCED", content, takeaways, code, pitfalls, false);
     }
+
+    // ==========================================
+    // LEARN MORE & IN-DEPTH STUDY GENERATOR
+    // ==========================================
+    public ModuleLearnMoreResponse generateSubPartLearnMore(Module module, LearnMoreRequest request) {
+        String partTitle = request != null && request.partTitle() != null ? request.partTitle() : "Core Topic Deep-Dive";
+        String partLevel = request != null && request.partLevel() != null ? request.partLevel() : "INTERMEDIATE";
+        String contentBody = request != null && request.contentBody() != null ? request.contentBody() : "";
+        String roadmapTopic = (request != null && request.roadmapTopic() != null && !request.roadmapTopic().isBlank())
+                ? request.roadmapTopic()
+                : (module.getRoadmap() != null ? module.getRoadmap().getTitle() : module.getTitle());
+
+        // 1. Attempt AI Generation via Gemini if key is configured
+        ModuleLearnMoreResponse aiResponse = callGeminiForLearnMore(roadmapTopic, module.getTitle(), partTitle, partLevel, contentBody);
+        if (aiResponse != null) {
+            return aiResponse;
+        }
+
+        // 2. Intelligent rich fallback tailored to topic
+        return generateFallbackLearnMore(roadmapTopic, module.getTitle(), partTitle, partLevel, contentBody);
+    }
+
+    private ModuleLearnMoreResponse callGeminiForLearnMore(String topic, String moduleTitle, String partTitle, String partLevel, String contentBody) {
+        try {
+            String apiKey = (this.geminiApiKey != null && !this.geminiApiKey.isBlank())
+                    ? this.geminiApiKey
+                    : System.getenv("GOOGLE_GENAI_API_KEY");
+            if (apiKey == null || apiKey.isBlank()) {
+                return null;
+            }
+
+            String model = (this.geminiModel != null && !this.geminiModel.isBlank())
+                    ? this.geminiModel
+                    : "gemini-3.6-flash";
+
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + apiKey;
+
+            String prompt = """
+                    You are a world-class principal software engineer and CS professor. A student needs an extensive, high-impact "Learn More" deep dive for this topic:
+                    Overall Track/Topic: %s
+                    Module: %s
+                    Sub-Part Lesson: %s (Level: %s)
+                    Existing Summary: %s
+                    
+                    INSTRUCTIONS:
+                    Generate a rich, deeply educational JSON response with:
+                    1. "title": An engaging deep-dive title.
+                    2. "summary": A crisp 2-sentence summary explaining why this concept is critical in modern software systems.
+                    3. "deepDiveMarkdown": In-depth, crystal-clear Markdown covering:
+                       - ### 1. Under-The-Hood Architecture & Runtime Lifecycle
+                       - ### 2. Memory, Complexity & Performance Trade-offs
+                       - ### 3. Real-World Failure Modes & Edge Cases
+                       - ### 4. When to Use vs Alternatives (with a clean comparison table or bullets)
+                    4. "codeSnippet": A comprehensive, production-grade, readable code snippet with inline explanatory comments.
+                    5. "codeLanguage": Language identifier (e.g. "java", "python", "sql", "javascript").
+                    6. "realWorldUseCases": Array of exactly 3 concrete industry use case descriptions (e.g. in high-scale web apps, payment systems, or distributed pipelines).
+                    7. "bestPractices": Array of exactly 4 actionable production engineering rules of thumb.
+                    8. "interviewQuestions": Array of exactly 3 objects with "question" and "answer" fields representing top technical interview questions on this topic.
+                    
+                    CRITICAL: Return ONLY valid raw JSON without markdown code fences.
+                    """.formatted(topic, moduleTitle, partTitle, partLevel, contentBody);
+
+            Map<String, Object> body = Map.of(
+                    "contents", List.of(
+                            Map.of("parts", List.of(Map.of("text", prompt)))
+                    ),
+                    "generationConfig", Map.of(
+                            "temperature", 0.4,
+                            "maxOutputTokens", 1600
+                    )
+            );
+
+            if (this.restClient == null) {
+                this.restClient = RestClient.builder().build();
+            }
+
+            String responseJson = this.restClient.post()
+                    .uri(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(String.class);
+
+            if (responseJson != null) {
+                JsonNode root = objectMapper.readTree(responseJson);
+                JsonNode candidates = root.path("candidates");
+                if (candidates.isArray() && !candidates.isEmpty()) {
+                    JsonNode parts = candidates.get(0).path("content").path("parts");
+                    if (parts.isArray() && !parts.isEmpty()) {
+                        String rawText = parts.get(0).path("text").asText();
+                        if (rawText != null && !rawText.isBlank()) {
+                            String cleanJson = rawText.replaceAll("^```json\\s*", "").replaceAll("```\\s*$", "").trim();
+                            JsonNode parsed = objectMapper.readTree(cleanJson);
+
+                            List<String> useCases = new ArrayList<>();
+                            if (parsed.path("realWorldUseCases").isArray()) {
+                                parsed.path("realWorldUseCases").forEach(node -> useCases.add(node.asText()));
+                            }
+                            List<String> bestPractices = new ArrayList<>();
+                            if (parsed.path("bestPractices").isArray()) {
+                                parsed.path("bestPractices").forEach(node -> bestPractices.add(node.asText()));
+                            }
+                            List<InterviewQnADTO> questions = new ArrayList<>();
+                            if (parsed.path("interviewQuestions").isArray()) {
+                                parsed.path("interviewQuestions").forEach(qNode -> {
+                                    questions.add(new InterviewQnADTO(
+                                            qNode.path("question").asText("Technical Question"),
+                                            qNode.path("answer").asText("Model technical answer.")
+                                    ));
+                                });
+                            }
+
+                            return new ModuleLearnMoreResponse(
+                                    parsed.path("title").asText(partTitle + " — Comprehensive Deep Dive"),
+                                    parsed.path("summary").asText("In-depth technical breakdown and production guide for " + partTitle),
+                                    parsed.path("deepDiveMarkdown").asText(),
+                                    parsed.path("codeSnippet").asText(),
+                                    parsed.path("codeLanguage").asText("code"),
+                                    useCases,
+                                    bestPractices,
+                                    questions
+                            );
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Fall through to rich topic-tailored fallback
+        }
+        return null;
+    }
+
+    private ModuleLearnMoreResponse generateFallbackLearnMore(String topic, String moduleTitle, String partTitle, String partLevel, String contentBody) {
+        String combined = (topic + " " + moduleTitle + " " + partTitle).toLowerCase();
+
+        // 1. DBMS / SQL / DATABASE
+        if (combined.contains("dbms") || combined.contains("database") || combined.contains("sql")) {
+            String title = "Deep-Dive Mastery: " + partTitle;
+            String summary = "Comprehensive architectural exploration of database engine internals, indexing mechanics, transactional serializability, and enterprise query optimization.";
+            String markdown = """
+                    ### 1. Under-The-Hood Architecture & Storage Mechanics
+                    Relational database management systems (RDBMS) like PostgreSQL and MySQL InnoDB manage persistence via fixed-size memory blocks called **Disk Pages** (typically 8KB or 16KB).
+                    
+                    - **Buffer Pool**: Dedicated server memory acting as an in-memory cache for disk pages. When querying a row, the storage engine reads the entire 8KB page into the buffer pool.
+                    - **Write-Ahead Logging (WAL)**: To guarantee ACID Durability without synchronously writing scattered pages to disk, changes are first appended to an immutable sequential log file before dirty pages are flushed asynchronously.
+                    - **Doublewrite Buffer**: Prevents partial page writes during power failures before modifying tablespace files.
+                    
+                    ### 2. Indexing Internals & B+ Tree Search Complexity
+                    - **Clustered Index**: Defines the physical sequential order of data rows on disk (usually the Primary Key). Lookups run in $O(\\log N)$ tree traversals.
+                    - **Non-Clustered (Secondary) Index**: Stores sorted index keys with pointers (RowIDs or PKs) to the underlying clustered record.
+                    - **Covering Index**: An index containing all columns requested in a `SELECT` statement, avoiding costly secondary table lookups entirely.
+                    
+                    ### 3. Concurrency, Lock Escalation & Isolation Anomalies
+                    | Isolation Level | Dirty Read | Non-Repeatable Read | Phantom Read |
+                    |:---|:---:|:---:|:---:|
+                    | **Read Uncommitted** | Possible | Possible | Possible |
+                    | **Read Committed** | Prevented | Possible | Possible |
+                    | **Repeatable Read** | Prevented | Prevented | Possible |
+                    | **Serializable** | Prevented | Prevented | Prevented |
+                    
+                    ### 4. Critical Production Failure Modes & Edge Cases
+                    - **Sequential Table Scans on High Volume**: Forgetting an index on foreign keys or filtering columns forces $O(N)$ full table scans, causing CPU saturation and high disk latency.
+                    - **N+1 Query Cascades**: Executing individual queries per child record instead of batch `JOIN` queries.
+                    - **Long-Running Transactions & Table Lock Bloat**: Uncommitted transactions hold row locks indefinitely, blocking subsequent writes.
+                    """;
+
+            String code = """
+                    -- Production-grade normalized table design with indexing & query optimization
+                    BEGIN;
+                    
+                    -- 1. Create table with appropriate constraints
+                    CREATE TABLE IF NOT EXISTS orders (
+                        order_id        BIGSERIAL PRIMARY KEY,
+                        customer_id     BIGINT NOT NULL,
+                        order_status    VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+                        total_amount    NUMERIC(12, 2) NOT NULL CHECK (total_amount >= 0),
+                        created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    );
+                    
+                    -- 2. Create composite covering index for fast filtered dashboard lookups
+                    CREATE INDEX IF NOT EXISTS idx_orders_customer_status_created
+                        ON orders (customer_id, order_status, created_at DESC);
+                    
+                    -- 3. Verify query execution plan utilizes index scan rather than table scan
+                    EXPLAIN ANALYZE
+                    SELECT order_id, total_amount, created_at
+                    FROM orders
+                    WHERE customer_id = 1042 AND order_status = 'COMPLETED'
+                    ORDER BY created_at DESC
+                    LIMIT 20;
+                    
+                    COMMIT;
+                    """;
+
+            List<String> useCases = List.of(
+                    "High-volume e-commerce checkout utilizing pessimistic row locking (`SELECT FOR UPDATE`) to prevent inventory overselling during sales.",
+                    "Financial banking ledger enforcing strict Serializable isolation to guarantee mathematical consistency across simultaneous transfers.",
+                    "Multi-tenant analytics SaaS leveraging composite indexes `(tenant_id, created_at)` to query millions of records in sub-10ms."
+            );
+
+            List<String> bestPractices = List.of(
+                    "Always create explicit indexes on foreign key columns used in joins and filters.",
+                    "Use `EXPLAIN (ANALYZE, BUFFERS)` in staging to inspect buffer hit ratios and eradicate sequential scans.",
+                    "Size database connection pools (HikariCP) conservatively based on hardware cores: `(cores * 2) + effective_spindles`.",
+                    "Keep write transactions as short and scoped as possible to minimize lock hold duration and prevent deadlocks."
+            );
+
+            List<InterviewQnADTO> questions = List.of(
+                    new InterviewQnADTO(
+                            "Why are B+ Trees preferred over Binary Search Trees or Hash Tables for database indexing?",
+                            "B+ Trees have high fan-out (hundreds of child pointers per node), which reduces tree depth to 3-4 levels, translating to very few disk I/O operations. Unlike Hash Tables, B+ Trees store all records in linked leaf nodes, making range queries ($O(K)$) extremely fast."
+                    ),
+                    new InterviewQnADTO(
+                            "How does Write-Ahead Logging (WAL) ensure durability during a server crash?",
+                            "The database writes the intent of every modification to sequential log files on disk BEFORE writing dirty memory pages to tables. On recovery, the database scans the WAL to replay committed transactions (Redo) and roll back uncommitted ones (Undo)."
+                    ),
+                    new InterviewQnADTO(
+                            "What is the Leftmost Prefix Rule in composite indexes?",
+                            "When an index is defined on columns (A, B, C), the database can only use the index for queries filtering on (A), (A, B), or (A, B, C). A query filtering only on (B, C) cannot use the composite index because the search tree is partitioned starting with column A."
+                    )
+            );
+
+            return new ModuleLearnMoreResponse(title, summary, markdown, code, "sql", useCases, bestPractices, questions);
+        }
+
+        // 2. JAVA / SPRING
+        if (combined.contains("java") || combined.contains("spring")) {
+            String title = "Deep-Dive Mastery: " + partTitle;
+            String summary = "Comprehensive engineering analysis of Java runtime internals, JVM memory zones, garbage collection cycles, and Spring Framework enterprise patterns.";
+            String markdown = """
+                    ### 1. JVM Architecture & Memory Model Internals
+                    The Java Virtual Machine organizes memory into specialized regions:
+                    - **Heap Memory**: Shared across all threads. Divided into **Young Generation** (Eden space, Survivor S0/S1 spaces) and **Old (Tenured) Generation**.
+                    - **Metaspace**: Resides in native host memory (replacing PermGen), holding class metadata, bytecode, and method definitions.
+                    - **Thread Stacks**: Dedicated memory per thread storing stack frames with local primitive variables and object references.
+                    
+                    ### 2. Spring IoC Container & Bean Lifecycle Mechanics
+                    1. **Component Scanning & Definition Loading**: Spring discovers classes annotated with `@Component`, `@Service`, or `@Repository`.
+                    2. **Instantiation & Injection**: The container instantiates beans and injects dependencies via reflection or constructors.
+                    3. **BeanPostProcessor Interception**: Spring creates dynamic CGLIB/JDK proxies for beans requiring `@Transactional`, `@Async`, or `@Cacheable`.
+                    4. **Initialization & Destruction**: Executes `@PostConstruct` and `DisposableBean` hooks.
+                    
+                    ### 3. Concurrency, Memory Visibility & The Java Memory Model (JMM)
+                    - **Happens-Before Relationship**: Guarantees that memory writes performed by one thread are visibly observed by another thread.
+                    - **`volatile`**: Enforces memory visibility and prevents CPU instruction reordering without acquiring heavy monitor locks.
+                    - **Atomic Constructs**: Utilize hardware-level Compare-And-Swap (CAS) instructions to eliminate thread blocking.
+                    
+                    ### 4. Senior Production Anti-Patterns to Avoid
+                    - **Thread Pool Queue Unboundedness**: Leaving `LinkedBlockingQueue` unbounded in executor services leads to gradual `OutOfMemoryError` under spikes.
+                    - **Self-Invocation Transaction Bypassing**: Calling a `@Transactional` method from another method within the same bean bypasses the Spring CGLIB proxy.
+                    """;
+
+            String code = """
+                    package com.example.service;
+                    
+                    import org.springframework.stereotype.Service;
+                    import org.springframework.transaction.annotation.Transactional;
+                    import java.util.concurrent.ConcurrentHashMap;
+                    import java.util.Optional;
+                    
+                    // Production-grade resilient service demonstrating constructor injection & thread safety
+                    @Service
+                    public class OrderProcessingService {
+                    
+                        private final ConcurrentHashMap<String, Long> rateLimiterCache = new ConcurrentHashMap<>();
+                    
+                        // Constructor injection ensures immutability & simplified unit testing
+                        public OrderProcessingService() {}
+                    
+                        @Transactional(readOnly = true)
+                        public Optional<String> fetchOrderDetails(String orderId) {
+                            if (orderId == null || orderId.isBlank()) {
+                                throw new IllegalArgumentException("Order ID cannot be empty");
+                            }
+                            // Optimized read path avoids dirty-checking overhead in Hibernate
+                            return Optional.of("Order Payload: " + orderId);
+                        }
+                    
+                        @Transactional(rollbackFor = Exception.class)
+                        public void executeOrderFulfillment(String orderId) {
+                            // Enforce atomic state transitions
+                            rateLimiterCache.compute(orderId, (key, count) -> count == null ? 1L : count + 1L);
+                        }
+                    }
+                    """;
+
+            List<String> useCases = List.of(
+                    "High-concurrency fintech microservice handling thousands of payment transactions per second with atomic state updates.",
+                    "Enterprise distributed order pipeline utilizing Spring Boot and asynchronous message listeners with automatic dead-letter queue routing.",
+                    "Sub-10ms latency caching service utilizing Caffeine in-memory cache backed by Redis for multi-node synchronization."
+            );
+
+            List<String> bestPractices = List.of(
+                    "Always use constructor injection over field `@Autowired` to ensure class immutability and seamless mockability.",
+                    "Mark read-only queries with `@Transactional(readOnly = true)` to disable Hibernate entity dirty-checking and optimize connection utilization.",
+                    "Always configure explicit thread pool boundaries (core, max, bounded queue, rejection policy) on `ThreadPoolExecutor`.",
+                    "Never catch generic `Exception` without structured logging or rethrowing to avoid silent failure anti-patterns."
+            );
+
+            List<InterviewQnADTO> questions = List.of(
+                    new InterviewQnADTO(
+                            "What is the Generational Hypothesis in JVM Garbage Collection?",
+                            "The Generational Hypothesis states that the vast majority of objects die very shortly after allocation. JVM garbage collectors leverage this by separating memory into Young and Old generations: collecting Young Gen (Eden) frequently with fast scavenges, and only promoting surviving long-lived objects to Tenured Gen."
+                    ),
+                    new InterviewQnADTO(
+                            "Why does calling a `@Transactional` method from within the same class fail to start a transaction?",
+                            "Spring applies transactional behavior by wrapping beans in dynamic proxies (CGLIB). When an external client calls the method, the proxy intercepts the call to open the transaction. Internal calls (`this.method()`) bypass the proxy, calling the raw target object directly."
+                    ),
+                    new InterviewQnADTO(
+                            "What is the difference between `volatile` and `synchronized`?",
+                            "`volatile` guarantees variable visibility across CPU caches and prevents instruction reordering, but does NOT guarantee atomicity for compound operations like `count++`. `synchronized` provides both visibility and mutual exclusion (locking) for blocks of code."
+                    )
+            );
+
+            return new ModuleLearnMoreResponse(title, summary, markdown, code, "java", useCases, bestPractices, questions);
+        }
+
+        // 3. PYTHON
+        if (combined.contains("python")) {
+            String title = "Deep-Dive Mastery: " + partTitle;
+            String summary = "Comprehensive exploration of Python runtime execution, CPython bytecode evaluation, memory management, and asynchronous event loop concurrency.";
+            String markdown = """
+                    ### 1. CPython Interpreter & Execution Mechanics
+                    When executing Python code:
+                    - **Source to Bytecode**: The parser converts source text into an Abstract Syntax Tree (AST), which the compiler compiles into `.pyc` bytecode instructions.
+                    - **The Evaluation Loop**: The CPython runtime enters `ceval.c`, popping bytecode instructions off the execution frame stack.
+                    - **Global Interpreter Lock (GIL)**: A mutex protecting CPython memory structures, allowing only one native thread to execute Python bytecodes at any time.
+                    
+                    ### 2. Memory Management & Object Model Internals
+                    - **`PyObject`**: Everything in Python is an object containing a reference count (`ob_refcnt`) and a pointer to its type object (`ob_type`).
+                    - **PyMalloc**: Specialized memory allocator optimizing allocations smaller than 512 bytes into memory arenas, pools, and blocks.
+                    - **Cyclic Garbage Collector**: Complements reference counting by detecting and collecting isolated circular reference loops (`gc` module).
+                    
+                    ### 3. Asynchronous Execution & The Event Loop
+                    - **Coroutines**: Functions defined with `async def` that return coroutine objects without executing immediately.
+                    - **Event Loop**: A cooperative single-threaded task scheduler using OS socket notifications (`epoll`/`kqueue`) to wake waiting coroutines without thread context switching.
+                    
+                    ### 4. Critical Production Anti-Patterns to Avoid
+                    - **Mutable Default Arguments**: Defining `def process(items=[])` retains the same list instance across separate function calls.
+                    - **CPU-Bound Multithreading**: Spawning Python threads for heavy mathematical computations causes thread thrashing due to the GIL. Use `multiprocessing` instead.
+                    """;
+
+            String code = """
+                    from typing import List, Dict, Optional, Generator
+                    import asyncio
+                    
+                    # Production-grade Python pattern demonstrating type hints, generators, and async concurrency
+                    class StreamProcessor:
+                        def __init__(self, batch_size: int = 100) -> None:
+                            self.batch_size: int = batch_size
+                    
+                        # Generator expression maintains O(1) memory footprint when processing massive streams
+                        def chunk_stream(self, data_stream: List[dict]) -> Generator[List[dict], None, None]:
+                            for i in range(0, len(data_stream), self.batch_size):
+                                yield data_stream[i : i + self.batch_size]
+                    
+                        async def process_batch_async(self, batch: List[dict]) -> Dict[str, int]:
+                            # Simulate cooperative non-blocking I/O dispatch
+                            await asyncio.sleep(0.01)
+                            return {"processed_count": len(batch)}
+                    
+                    # Example invocation
+                    async def main():
+                        processor = StreamProcessor(batch_size=50)
+                        sample_data = [{"id": i} for i in range(120)]
+                        for chunk in processor.chunk_stream(sample_data):
+                            result = await processor.process_batch_async(chunk)
+                            print(f"Batch result: {result}")
+                    """;
+
+            List<String> useCases = List.of(
+                    "High-throughput asynchronous API gateway handling thousands of concurrent WebSocket connections with `asyncio`.",
+                    "Data engineering ETL pipeline utilizing generator pipelines to transform gigabytes of stream records with bounded memory.",
+                    "Machine learning feature extraction pipeline utilizing vectorized NumPy operations and multiprocessing worker pools."
+            );
+
+            List<String> bestPractices = List.of(
+                    "Never use mutable default arguments (`def fn(x=[])`); use `def fn(x: Optional[List] = None)` and initialize inside the function.",
+                    "Use generator functions (`yield`) instead of list comprehensions when processing large data streams to guarantee $O(1)$ memory usage.",
+                    "Leverage `slots=True` in dataclasses to eliminate `__dict__` overhead and reduce memory consumption by up to 40%.",
+                    "Use multiprocessing or native C/Rust extensions for CPU-bound tasks to bypass Global Interpreter Lock bottlenecks."
+            );
+
+            List<InterviewQnADTO> questions = List.of(
+                    new InterviewQnADTO(
+                            "What is the Global Interpreter Lock (GIL) and how does it impact I/O-bound vs CPU-bound tasks?",
+                            "The GIL is a mutex in CPython that ensures only one thread executes Python bytecode at a time. For I/O-bound tasks, threads release the GIL while waiting for network or disk operations, enabling high concurrency. For CPU-bound tasks, threads fight for the lock, resulting in zero parallelism; multiprocessing must be used instead."
+                    ),
+                    new InterviewQnADTO(
+                            "How does Python manage memory and resolve circular references?",
+                            "Python primarily uses reference counting for instant memory deallocation when an object's reference counter drops to zero. To resolve circular references (where objects reference each other), a generational cyclic garbage collector runs periodically, identifying unreachable groups using pointer traversal."
+                    ),
+                    new InterviewQnADTO(
+                            "What is the difference between a generator and an iterator in Python?",
+                            "An iterator is any object that implements the iterator protocol (`__iter__()` and `__next__()`). A generator is a function containing `yield` statements that automatically produces an iterator, pausing and saving its execution state between invocations."
+                    )
+            );
+
+            return new ModuleLearnMoreResponse(title, summary, markdown, code, "python", useCases, bestPractices, questions);
+        }
+
+        // 4. GENERAL / COMPUTER SCIENCE FALLBACK
+        String title = "Deep-Dive Mastery: " + partTitle;
+        String summary = "Comprehensive theoretical and practical deep dive into " + partTitle + " covering architectural invariants, performance trade-offs, and production engineering best practices.";
+        String markdown = """
+                ### 1. Fundamental Principles & Runtime Architecture
+                Mastering **%s** requires building a deterministic mental model of how components interact under load.
+                
+                - **Deterministic State Transformations**: Ensuring that operations produce predictable, repeatable outcomes without hidden side effects.
+                - **Separation of Concerns**: Keeping domain business logic decoupled from transport, serialization, and storage layers.
+                - **Defensive Boundary Validation**: Validating all inputs at system entry points before dispatching to core business services.
+                
+                ### 2. Computational Complexity & Performance Trade-offs
+                - **Time Complexity**: Aiming for $O(1)$ or $O(\\log N)$ operations on hot execution paths.
+                - **Space Complexity**: Designing bounded data structures to avoid unbounded memory expansion.
+                - **Concurrency Control**: Isolate shared state to prevent race conditions and cascading deadlocks.
+                
+                ### 3. Production Failure Modes & Resiliency Tactics
+                - **Cascading Failures**: Implement circuit breakers and graceful degradation when downstream dependencies degrade.
+                - **Silent Failures**: Always log actionable context with structured metadata when catching exceptions.
+                - **Resource Leaks**: Enforce strict timeouts, bounded connection pools, and proper cleanup handlers.
+                """.formatted(partTitle);
+
+        String code = """
+                // Production-grade modular implementation demonstrating clean architecture & defensive validation
+                public class %sMasteryService {
+                
+                    public void executeWorkflow(String input) {
+                        if (input == null || input.isBlank()) {
+                            throw new IllegalArgumentException("Input must be valid and non-empty");
+                        }
+                        try {
+                            // Execute business logic with deterministic error boundaries
+                            processCoreDomain(input);
+                        } catch (Exception e) {
+                            // Log actionable telemetry and fail gracefully
+                            throw new RuntimeException("Workflow failed gracefully: " + e.getMessage(), e);
+                        }
+                    }
+                
+                    private void processCoreDomain(String payload) {
+                        // High-performance domain execution
+                    }
+                }
+                """.formatted(partTitle.replaceAll("[^a-zA-Z0-9]", ""));
+
+        List<String> useCases = List.of(
+                "High-scale cloud architecture handling distributed event streams with guaranteed delivery semantics.",
+                "Mission-critical transaction processing service with strict consistency and latency SLA thresholds.",
+                "Extensible enterprise framework utilizing modular plugin patterns and decoupled dependency injection."
+        );
+
+        List<String> bestPractices = List.of(
+                "Design for failure: always configure circuit breakers, retry limits, and backpressure mechanisms.",
+                "Favor composition over inheritance to keep architectures decoupled and easily maintainable.",
+                "Maintain complete test coverage for edge cases, nullability, and concurrent access scenarios.",
+                "Emit structured observability metrics (P95/P99 latency, error rates) to detect bottlenecks early."
+        );
+
+        List<InterviewQnADTO> questions = List.of(
+                new InterviewQnADTO(
+                        "Why is separation of concerns critical in modern software architecture?",
+                        "Separation of concerns isolates independent business responsibilities into distinct modules. This minimizes blast radius during bugs, simplifies unit testing, and allows individual layers to evolve or scale without cascading rewrites."
+                    ),
+                new InterviewQnADTO(
+                        "How do you design systems defensively against cascading failures?",
+                        "By implementing circuit breakers (e.g. Resilience4j), request timeouts, bulkheads to isolate resource pools, and fallback strategies that return degraded or cached data rather than hanging connections."
+                    ),
+                new InterviewQnADTO(
+                        "What is the difference between latency and throughput, and how do they trade off?",
+                        "Latency is the time taken to complete a single operation (e.g., in milliseconds). Throughput is the number of operations processed per unit time (e.g., requests per second). Techniques like batching increase throughput but often slightly increase single-request latency."
+                    )
+        );
+
+        return new ModuleLearnMoreResponse(title, summary, markdown, code, "code", useCases, bestPractices, questions);
+    }
 }
+

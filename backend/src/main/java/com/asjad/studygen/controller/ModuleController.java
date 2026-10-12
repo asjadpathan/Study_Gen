@@ -6,6 +6,8 @@ import com.asjad.studygen.dto.practice.DrillEvaluationRequest;
 import com.asjad.studygen.dto.practice.DrillEvaluationResponse;
 import com.asjad.studygen.dto.practice.DrillItemDTO;
 import com.asjad.studygen.dto.practice.ModuleDrillsResponse;
+import com.asjad.studygen.dto.roadmap.LearnMoreRequest;
+import com.asjad.studygen.dto.roadmap.ModuleLearnMoreResponse;
 import com.asjad.studygen.entity.Concept;
 import com.asjad.studygen.entity.Module;
 import com.asjad.studygen.entity.User;
@@ -233,5 +235,18 @@ public class ModuleController {
             @RequestBody DrillEvaluationRequest request) {
 
         return ResponseEntity.ok(drillService.evaluateScenarioAnswer(user, request));
+    }
+
+    @PostMapping("/{id}/subparts/learn-more")
+    public ResponseEntity<ModuleLearnMoreResponse> getSubPartLearnMore(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id,
+            @RequestBody(required = false) LearnMoreRequest request) {
+
+        Module module = moduleRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Module not found: " + id));
+
+        ModuleLearnMoreResponse response = teachingContentService.generateSubPartLearnMore(module, request);
+        return ResponseEntity.ok(response);
     }
 }

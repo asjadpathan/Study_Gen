@@ -103,6 +103,11 @@ const ModuleStudy = () => {
   const [guideData, setGuideData] = useState(null);
   const [guideLoading, setGuideLoading] = useState(false);
 
+  // In-Depth "Learn More" state per sub-part
+  const [learnMoreDataMap, setLearnMoreDataMap] = useState({});
+  const [learnMoreLoadingMap, setLearnMoreLoadingMap] = useState({});
+  const [learnMoreExpandedMap, setLearnMoreExpandedMap] = useState({});
+
   useEffect(() => {
     const fetchModuleDetails = async () => {
       setLoading(true);
@@ -168,6 +173,40 @@ const ModuleStudy = () => {
     setCopied(true);
     addToast('Code snippet copied to clipboard!', 'success');
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleToggleLearnMore = async (partIndex) => {
+    const isCurrentlyExpanded = !!learnMoreExpandedMap[partIndex];
+    if (isCurrentlyExpanded) {
+      setLearnMoreExpandedMap((prev) => ({ ...prev, [partIndex]: false }));
+      return;
+    }
+
+    setLearnMoreExpandedMap((prev) => ({ ...prev, [partIndex]: true }));
+
+    if (learnMoreDataMap[partIndex]) {
+      return;
+    }
+
+    setLearnMoreLoadingMap((prev) => ({ ...prev, [partIndex]: true }));
+    try {
+      const part = subParts[partIndex];
+      const res = await axiosInstance.post(`/modules/${id}/subparts/learn-more`, {
+        partTitle: part?.title || `Sub-Part ${partIndex + 1}`,
+        partLevel: part?.level || 'INTERMEDIATE',
+        contentBody: part?.contentBody || '',
+        partIndex: partIndex,
+        roadmapTopic: moduleData.roadmapTitle || moduleData.title || ''
+      });
+      if (res.data) {
+        setLearnMoreDataMap((prev) => ({ ...prev, [partIndex]: res.data }));
+      }
+    } catch (err) {
+      console.error('Failed to load in-depth learn-more info:', err);
+      addToast('Could not load extra concepts. Please try again.', 'error');
+    } finally {
+      setLearnMoreLoadingMap((prev) => ({ ...prev, [partIndex]: false }));
+    }
   };
 
   if (loading) {
@@ -345,27 +384,177 @@ const ModuleStudy = () => {
                   </div>
                 )}
 
-                {/* Common Pitfalls & Defense Box */}
-                {currentPart.pitfalls && (
-                  <div className={styles.pitfallsBox}>
-                    <span className={styles.pitfallIcon}>⚠️</span>
-                    <p className={styles.pitfallText}>
-                      <strong>Common Pitfalls & Edge Cases: </strong>
-                      {currentPart.pitfalls}
-                    </p>
-                  </div>
-                )}
+                {/* Learn More & Deep Dive Feature */}
+                <div className={styles.learnMoreContainer}>
+                  <div className={styles.learnMoreBanner}>
+                    <div className={styles.learnMoreBannerLeft}>
+                      <div className={styles.learnMoreSparkleBadge}>
+                        <span>✨</span>
+                        <span>Topic Expansion</span>
+                      </div>
+                      <h4 className={styles.learnMoreBannerTitle}>Need more depth on this concept?</h4>
+                      <p className={styles.learnMoreBannerSubtitle}>
+                        Load comprehensive architectural mechanics, real-world industry scenarios, production-grade code, and technical interview Q&As.
+                      </p>
+                    </div>
 
-                {/* Key Takeaways Callout Box */}
-                {currentPart.keyTakeaways && (
-                  <div className={styles.takeawaysBox}>
-                    <span className={styles.takeawayIcon}>💡</span>
-                    <p className={styles.takeawayText}>
-                      <strong>Core Takeaway: </strong>
-                      {currentPart.keyTakeaways}
-                    </p>
+                    <button
+                      type="button"
+                      className={`${styles.learnMoreBtn} ${learnMoreExpandedMap[activePartIndex] ? styles.learnMoreBtnActive : ''}`}
+                      onClick={() => handleToggleLearnMore(activePartIndex)}
+                      disabled={learnMoreLoadingMap[activePartIndex]}
+                    >
+                      {learnMoreLoadingMap[activePartIndex] ? (
+                        <>
+                          <span className={styles.btnSpinner} />
+                          <span>Synthesizing Deep-Dive...</span>
+                        </>
+                      ) : learnMoreExpandedMap[activePartIndex] ? (
+                        <>
+                          <span>▲ Collapse Deep Dive</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>📖 Learn More & In-Depth Details ➔</span>
+                        </>
+                      )}
+                    </button>
                   </div>
-                )}
+
+                  {/* Loading State */}
+                  {learnMoreLoadingMap[activePartIndex] && (
+                    <div className={styles.deepDiveLoadingCard}>
+                      <div className={styles.deepDiveSpinner} />
+                      <div className={styles.deepDiveLoadingInfo}>
+                        <h4>Synthesizing Comprehensive Deep-Dive...</h4>
+                        <p>Preparing architectural walkthrough, execution mechanics, code patterns, and interview insights tailored to {currentPart.title}.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Deep-Dive Expanded Content Card */}
+                  {learnMoreExpandedMap[activePartIndex] && learnMoreDataMap[activePartIndex] && (
+                    <div className={styles.deepDiveCard}>
+                      <div className={styles.deepDiveHeader}>
+                        <div className={styles.deepDiveHeaderTop}>
+                          <span className={styles.deepDiveBadge}>
+                            <span>📚</span> IN-DEPTH CONCEPT MASTERY
+                          </span>
+                          <span className={styles.deepDiveLevelBadge}>
+                            {currentPart.level || 'INTERMEDIATE'} DEEP DIVE
+                          </span>
+                        </div>
+                        <h3 className={styles.deepDiveTitle}>
+                          {learnMoreDataMap[activePartIndex].title || `${currentPart.title} — Deep Dive`}
+                        </h3>
+                        <p className={styles.deepDiveSummary}>
+                          {learnMoreDataMap[activePartIndex].summary}
+                        </p>
+                      </div>
+
+                      {/* Section 1: Detailed Theoretical & Architectural Breakdown */}
+                      {learnMoreDataMap[activePartIndex].deepDiveMarkdown && (
+                        <div className={styles.deepDiveSection}>
+                          <div className={styles.sectionHeader}>
+                            <span className={styles.sectionIcon}>🏛️</span>
+                            <h4 className={styles.sectionTitle}>Architectural Mechanics & Runtime Internals</h4>
+                          </div>
+                          <div
+                            className={styles.deepDiveBody}
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(
+                                renderMarkdownToHtml(learnMoreDataMap[activePartIndex].deepDiveMarkdown)
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Section 2: Production Code Implementation */}
+                      {learnMoreDataMap[activePartIndex].codeSnippet && (
+                        <div className={styles.deepDiveSection}>
+                          <div className={styles.codeHeader}>
+                            <span className={styles.codeHeaderTitle}>
+                              💻 PRODUCTION CODE IMPLEMENTATION ({learnMoreDataMap[activePartIndex].codeLanguage?.toUpperCase() || 'CODE'})
+                            </span>
+                            <button
+                              type="button"
+                              className={styles.copyCodeBtn}
+                              onClick={() => handleCopySnippet(learnMoreDataMap[activePartIndex].codeSnippet)}
+                            >
+                              {copied ? '✓ Copied' : '📋 Copy Code'}
+                            </button>
+                          </div>
+                          <pre className={styles.codeBlock}>
+                            <code>{learnMoreDataMap[activePartIndex].codeSnippet}</code>
+                          </pre>
+                        </div>
+                      )}
+
+                      {/* Section 3: Real-World Industry Scenarios */}
+                      {learnMoreDataMap[activePartIndex].realWorldUseCases?.length > 0 && (
+                        <div className={styles.deepDiveSection}>
+                          <div className={styles.sectionHeader}>
+                            <span className={styles.sectionIcon}>🏢</span>
+                            <h4 className={styles.sectionTitle}>Real-World Industry Applications</h4>
+                          </div>
+                          <div className={styles.useCasesGrid}>
+                            {learnMoreDataMap[activePartIndex].realWorldUseCases.map((useCase, idx) => (
+                              <div key={idx} className={styles.useCaseCard}>
+                                <div className={styles.useCaseCardHeader}>
+                                  <span className={styles.useCaseBadge}>Scenario #{idx + 1}</span>
+                                </div>
+                                <p className={styles.useCaseText}>{useCase}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Section 4: Production Best Practices & Rules of Thumb */}
+                      {learnMoreDataMap[activePartIndex].bestPractices?.length > 0 && (
+                        <div className={styles.deepDiveSection}>
+                          <div className={styles.sectionHeader}>
+                            <span className={styles.sectionIcon}>🛡️</span>
+                            <h4 className={styles.sectionTitle}>Senior Engineer Best Practices</h4>
+                          </div>
+                          <div className={styles.bestPracticesList}>
+                            {learnMoreDataMap[activePartIndex].bestPractices.map((tip, idx) => (
+                              <div key={idx} className={styles.bestPracticeItem}>
+                                <span className={styles.bestPracticeCheck}>✓</span>
+                                <span className={styles.bestPracticeText}>{tip}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Section 5: High-Impact Technical Interview Questions & Answers */}
+                      {learnMoreDataMap[activePartIndex].interviewQuestions?.length > 0 && (
+                        <div className={styles.deepDiveSection}>
+                          <div className={styles.sectionHeader}>
+                            <span className={styles.sectionIcon}>🎯</span>
+                            <h4 className={styles.sectionTitle}>Technical Interview Questions & Model Answers</h4>
+                          </div>
+                          <div className={styles.interviewQuestionsList}>
+                            {learnMoreDataMap[activePartIndex].interviewQuestions.map((qna, idx) => (
+                              <div key={idx} className={styles.qnaCard}>
+                                <div className={styles.qnaQuestionRow}>
+                                  <span className={styles.qnaBadge}>Q{idx + 1}</span>
+                                  <strong className={styles.qnaQuestionText}>{qna.question}</strong>
+                                </div>
+                                <div className={styles.qnaAnswerRow}>
+                                  <span className={styles.qnaAnswerBadge}>Ans</span>
+                                  <div className={styles.qnaAnswerText}>{qna.answer}</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Reader Footer Navigation */}
                 <div className={styles.readerFooter}>

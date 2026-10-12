@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
-import AIAssistantDrawer from '../components/AIAssistantDrawer';
+import ChatBotWidget from '../components/ChatBotWidget';
 import OfflineBanner from '../components/OfflineBanner';
 import RateLimitBanner, { parseRetryAfter } from '../components/RateLimitBanner';
 import { ToastProvider } from '../context/ToastContext';
@@ -15,7 +15,6 @@ import styles from './AppShell.module.css';
 
 const AppShell = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [rateLimitSeconds, setRateLimitSeconds] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,14 +57,12 @@ const AppShell = () => {
           <Sidebar
             isOpen={mobileSidebarOpen}
             onClose={() => setMobileSidebarOpen(false)}
-            onOpenAIDrawer={() => setAiDrawerOpen(true)}
           />
 
           {/* Main Application Area */}
           <div className={styles.mainWrapper}>
             <TopBar
               onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-              onOpenAIDrawer={() => setAiDrawerOpen(true)}
             />
 
             <main className={styles.pageContent}>
@@ -73,12 +70,8 @@ const AppShell = () => {
             </main>
           </div>
 
-          {/* Global AI Assistant Drawer */}
-          <AIAssistantDrawer
-            isOpen={aiDrawerOpen}
-            onClose={() => setAiDrawerOpen(false)}
-            currentModuleId={currentModuleId}
-          />
+          {/* Floating AI Chatbot in Right Corner */}
+          <ChatBotWidget currentModuleId={currentModuleId} />
         </div>
       </ToastProvider>
     </NetworkStatusProvider>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import Button from './Button';
 import logoImg from '../assets/images/logo.png';
+import logoWhiteImg from '../assets/images/logo-white.png';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
@@ -23,7 +24,11 @@ const Navbar = () => {
       <div className={styles.container}>
         {/* Logo */}
         <Link to="/" className={styles.logo} aria-label="StudyGen Home">
-          <img src={logoImg} alt="StudyGen" className={styles.navbarLogo} />
+          <img
+            src={isDark ? logoWhiteImg : logoImg}
+            alt="StudyGen"
+            className={styles.navbarLogo}
+          />
         </Link>
 
         {/* Desktop Navigation Links */}

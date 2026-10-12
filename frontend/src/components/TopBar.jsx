@@ -12,13 +12,19 @@ const pageTitleMap = {
   '/roadmap-view': 'Roadmap View',
   '/roadmap-workspace': 'My Roadmaps Workspace',
   '/document-analyzer': 'Document & PDF Analyzer',
+  '/documents': 'Documents & Library',
+  '/practice': 'Practice & Flashcards',
+  '/practice-hub': 'Practice & Flashcards',
+  '/practice/session': 'Flashcard Review Session',
+  '/chat': 'AI Chat Assistant',
+  '/career': 'Career Paths',
   '/study-room': 'Study Room',
   '/resources': 'Resource Discovery',
   '/community': 'Community Zone',
   '/profile': 'User Profile',
 };
 
-const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
+const TopBar = ({ onToggleSidebar, title: customTitle }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, refreshStreak } = useAuth();
@@ -117,22 +123,12 @@ const TopBar = ({ onToggleSidebar, onOpenAIDrawer, title: customTitle }) => {
         <div
           className={styles.flashcardsChip}
           title={`${flashcardsDue} flashcard reviews due today`}
-          onClick={() => navigate('/roadmap-view')}
+          onClick={() => navigate('/practice')}
+          style={{ cursor: 'pointer' }}
         >
           <span className={styles.flashcardsIcon}>🎴</span>
           <span className={styles.flashcardsBadge}>{flashcardsDue}</span>
         </div>
-
-        {/* AI Assistant Sparkle Button */}
-        <button
-          type="button"
-          className={styles.aiSparkleBtn}
-          onClick={onOpenAIDrawer}
-          title="Open AI Assistant"
-        >
-          <span>✨</span>
-          <span className={styles.aiBtnText}>AI Assistant</span>
-        </button>
 
         {/* Dark / Light Mode Toggle Button */}
         <button

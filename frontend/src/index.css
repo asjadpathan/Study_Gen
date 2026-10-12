@@ -2,6 +2,8 @@
    GLOBAL DESIGN SYSTEM & BASE STYLES
    ======================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
 *,
 *::before,
 *::after {
@@ -14,46 +16,53 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  /* Primary Color Palette (Indigo / Violet) */
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-primary-active: #3730a3;
-  --color-primary-light: #818cf8;
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
+  /* Brand Color System — Electric Violet + Cyber Teal */
+  --color-primary: #6d28d9;
+  --color-primary-hover: #5b21b6;
+  --color-primary-active: #4c1d95;
+  --color-primary-light: #a78bfa;
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
 
-  /* Secondary Color Palette (Sleek Dark Slate) */
+  /* Accent — Electric Teal */
+  --color-teal: #0d9488;
+  --color-teal-light: #ccfbf1;
+  --color-pink: #db2777;
+  --color-pink-light: #fce7f3;
+
+  /* Secondary (Slate) */
   --color-secondary: #0f172a;
   --color-secondary-hover: #1e293b;
   --color-secondary-active: #334155;
 
-  /* Tertiary Accent Palette (Vibrant Violet / Amber) */
-  --color-tertiary: #8b5cf6;
-  --color-tertiary-hover: #7c3aed;
-  --color-tertiary-light: #f3e8ff;
+  /* Tertiary Accent */
+  --color-tertiary: #7c3aed;
+  --color-tertiary-hover: #6d28d9;
+  --color-tertiary-light: #f5f3ff;
   --color-accent: #f59e0b;
   --color-accent-light: #fef3c7;
 
   /* Surfaces & Backgrounds */
-  --color-bg: #f8fafc;
+  --color-bg: #fafafa;
   --color-surface: #ffffff;
-  --color-surface-glass: rgba(255, 255, 255, 0.85);
-  --color-border: #e2e8f0;
-  --color-border-hover: #cbd5e1;
+  --color-surface-glass: rgba(255, 255, 255, 0.82);
+  --color-border: #e5e7eb;
+  --color-border-hover: #d1d5db;
 
   /* Text Colors */
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
-  --color-text-light: #94a3b8;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
+  --color-text-light: #9ca3af;
   --color-text-inverted: #ffffff;
 
   /* Elevation & Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.04);
-  --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.25);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  --shadow-glow: 0 0 30px rgba(109, 40, 217, 0.2);
+  --shadow-glow-teal: 0 0 25px rgba(13, 148, 136, 0.2);
 
   /* Radius */
   --radius-sm: 0.375rem;
@@ -66,18 +75,19 @@
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Neutral Color Palette (Light Mode Default) */
-  --color-neutral-50: #f8fafc;
-  --color-neutral-100: #f1f5f9;
-  --color-neutral-200: #e2e8f0;
-  --color-neutral-300: #cbd5e1;
-  --color-neutral-400: #94a3b8;
-  --color-neutral-500: #64748b;
-  --color-neutral-600: #475569;
-  --color-neutral-700: #334155;
-  --color-neutral-800: #1e293b;
-  --color-neutral-900: #0f172a;
+  /* Neutral Color Palette */
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
 
   font: 16px/1.6 var(--font-sans);
   color: var(--color-text);
@@ -95,53 +105,57 @@
 [data-theme='dark'],
 .dark-theme {
   /* Surfaces & Backgrounds */
-  --color-bg: #090d16;
-  --color-surface: #111827;
-  --color-surface-glass: rgba(17, 24, 39, 0.88);
-  --color-border: #1f293d;
-  --color-border-hover: #334155;
+  --color-bg: #08080f;
+  --color-surface: #0f0f1a;
+  --color-surface-glass: rgba(15, 15, 26, 0.88);
+  --color-border: #1c1c2e;
+  --color-border-hover: #2d2d42;
 
   /* Text Colors */
-  --color-text: #f8fafc;
-  --color-text-muted: #94a3b8;
-  --color-text-light: #64748b;
-  --color-text-inverted: #0f172a;
+  --color-text: #f1f0ff;
+  --color-text-muted: #9590b0;
+  --color-text-light: #5f5b78;
+  --color-text-inverted: #08080f;
 
-  /* Primary Palette (Optimized for Dark Backgrounds) */
-  --color-primary: #6366f1;
-  --color-primary-hover: #818cf8;
-  --color-primary-active: #4f46e5;
-  --color-primary-light: #a5b4fc;
-  --color-primary-50: #1e1b4b;
-  --color-primary-100: #2e2a72;
-  --color-primary-200: #3730a3;
+  /* Primary Palette */
+  --color-primary: #8b5cf6;
+  --color-primary-hover: #a78bfa;
+  --color-primary-active: #7c3aed;
+  --color-primary-light: #c4b5fd;
+  --color-primary-50: #1a0e3b;
+  --color-primary-100: #231452;
+  --color-primary-200: #3b1f7a;
+
+  /* Teal in dark mode */
+  --color-teal: #2dd4bf;
+  --color-teal-light: #042f2e;
 
   /* Secondary & Tertiary */
-  --color-secondary: #f8fafc;
-  --color-secondary-hover: #e2e8f0;
-  --color-secondary-active: #cbd5e1;
+  --color-secondary: #f1f0ff;
+  --color-secondary-hover: #e2e0ff;
+  --color-secondary-active: #c4b5fd;
+  --color-tertiary-light: #1a0e3b;
+  --color-accent-light: #2d1a00;
 
-  --color-tertiary-light: #2e1065;
-  --color-accent-light: #451a03;
+  /* Neutrals for Dark */
+  --color-neutral-50: #0f0f1a;
+  --color-neutral-100: #1c1c2e;
+  --color-neutral-200: #2d2d42;
+  --color-neutral-300: #3d3d55;
+  --color-neutral-400: #5f5b78;
+  --color-neutral-500: #9590b0;
+  --color-neutral-600: #bfbbdc;
+  --color-neutral-700: #d5d2ee;
+  --color-neutral-800: #e8e6f8;
+  --color-neutral-900: #f1f0ff;
 
-  /* Neutrals for Dark Mode Components */
-  --color-neutral-50: #111827;
-  --color-neutral-100: #1f293d;
-  --color-neutral-200: #334155;
-  --color-neutral-300: #475569;
-  --color-neutral-400: #64748b;
-  --color-neutral-500: #94a3b8;
-  --color-neutral-600: #cbd5e1;
-  --color-neutral-700: #e2e8f0;
-  --color-neutral-800: #f1f5f9;
-  --color-neutral-900: #ffffff;
-
-  /* Dark Elevation & Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.65), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.35);
+  /* Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.65), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 35px rgba(139, 92, 246, 0.3);
+  --shadow-glow-teal: 0 0 30px rgba(45, 212, 191, 0.25);
 }
 
 body {
@@ -184,4 +198,38 @@ button {
 html {
   scroll-behavior: smooth;
   background-color: var(--color-bg);
+}
+
+/* ========================================
+   GLOBAL NOISE TEXTURE OVERLAY
+   ======================================== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-300);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-light);
 }

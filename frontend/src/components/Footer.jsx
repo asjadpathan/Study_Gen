@@ -1,18 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import logoImg from '../assets/images/logo.png';
+import logoWhiteImg from '../assets/images/logo-white.png';
 import styles from './Footer.module.css';
 
 const Footer = () => {
+  const { isDark } = useTheme();
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.topSection}>
           <div className={styles.brandInfo}>
             <Link to="/" className={styles.logo} aria-label="StudyGen Home">
-              <div className={styles.footerLogoWrapper}>
-                <img src={logoImg} alt="StudyGen" className={styles.footerLogo} />
-              </div>
+              <img
+                src={isDark ? logoWhiteImg : logoImg}
+                alt="StudyGen"
+                className={styles.footerLogo}
+              />
             </Link>
             <p className={styles.tagline}>
               Accelerating human mastery with AI-driven personalized learning paths, diagnostic assessment, and interactive study rooms.

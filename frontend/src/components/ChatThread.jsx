@@ -208,8 +208,9 @@ const ChatThread = ({
       const decoder = new TextDecoder();
       let buffer = '';
       let receivedAnyToken = false;
+      let isDone = false;
 
-      while (true) {
+      while (!isDone) {
         const { done, value } = await reader.read();
         if (done) break;
 
@@ -237,7 +238,8 @@ const ChatThread = ({
             }
           } else if (line.startsWith('data:')) {
             const dataStr = line.slice(5).trim();
-            if (dataStr === '[DONE]') {
+            if (dataStr === '[DONE]' || dataStr === '"[DONE]"' || dataStr.includes('[DONE]')) {
+              isDone = true;
               break;
             }
 
@@ -267,6 +269,13 @@ const ChatThread = ({
               }
             }
           }
+        }
+
+        if (isDone) {
+          try {
+            await reader.cancel();
+          } catch {}
+          break;
         }
       }
 
@@ -316,6 +325,17 @@ const ChatThread = ({
       abortControllerRef.current = null;
     }
   };
+
+  // Keyboard shortcut: Press Escape to stop generation immediately
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isStreaming) {
+        handleStopStreaming();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isStreaming]);
 
   // Copy message text
   const handleCopyMessage = (id, text) => {
@@ -526,29 +546,17 @@ const ChatThread = ({
         </div>
       )}
 
-      {/* Context Chips Bar */}
-      <div className={styles.contextBar}>
-        <div className={styles.contextChips}>
-          <span className={styles.chip} title="Roadmaps created">
-            <span className={styles.chipIcon}>🗺️</span>
-            <span>{contextMeta.roadmapCount || 0} Roadmap{contextMeta.roadmapCount === 1 ? '' : 's'}</span>
-          </span>
-          <span className={styles.chip} title="Active study modules">
-            <span className={styles.chipIcon}>📦</span>
-            <span>{contextMeta.moduleCount || 0} Module{contextMeta.moduleCount === 1 ? '' : 's'}</span>
-          </span>
-          <span className={styles.chip} title="Uploaded documents in knowledge base">
-            <span className={styles.chipIcon}>📄</span>
-            <span>{contextMeta.documentCount || 0} Document{contextMeta.documentCount === 1 ? '' : 's'}</span>
-          </span>
-          {initialModuleId && (
+      {/* Active Module Context Indicator (only when focused on a specific module) */}
+      {initialModuleId && (
+        <div className={styles.contextBar}>
+          <div className={styles.contextChips}>
             <span className={`${styles.chip} ${styles.chipActiveModule}`}>
               <span className={styles.chipDot}></span>
               <span>Module Context #{initialModuleId}</span>
             </span>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Message List Area */}
       <div className={styles.messageArea}>

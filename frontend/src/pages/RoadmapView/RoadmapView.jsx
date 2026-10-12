@@ -20,11 +20,34 @@ const RoadmapView = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
-  const roadmapId = params.id || searchParams.get('id') || '1';
+  const explicitId = params.id || searchParams.get('id');
+  const [roadmapId, setRoadmapId] = useState(explicitId || null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [roadmap, setRoadmap] = useState(null);
+
+  // Auto-resolve active roadmap when navigating to /roadmap-view without an explicit ID
+  useEffect(() => {
+    if (explicitId) {
+      setRoadmapId(explicitId);
+      return;
+    }
+    axiosInstance
+      .get('/roadmaps')
+      .then((res) => {
+        const list = Array.isArray(res.data) ? res.data : [];
+        if (list.length > 0) {
+          const active = list.find((r) => r.isActive) || list[0];
+          setRoadmapId(String(active.id));
+        } else {
+          navigate('/roadmaps');
+        }
+      })
+      .catch(() => {
+        navigate('/roadmaps');
+      });
+  }, [explicitId, navigate]);
 
   // Tabs state: 'list' | 'graph'
   const [activeTab, setActiveTab] = useState('list');
@@ -47,6 +70,7 @@ const RoadmapView = () => {
 
   // Fetch full roadmap detail on mount or roadmapId change
   const fetchRoadmapDetail = useCallback(async () => {
+    if (!roadmapId) return;
     setLoading(true);
     setError(null);
     try {
@@ -62,8 +86,10 @@ const RoadmapView = () => {
   }, [roadmapId]);
 
   useEffect(() => {
-    fetchRoadmapDetail();
-  }, [fetchRoadmapDetail]);
+    if (roadmapId) {
+      fetchRoadmapDetail();
+    }
+  }, [roadmapId, fetchRoadmapDetail]);
 
   // Lazy fetch graph data when Graph tab is first selected
   useEffect(() => {
@@ -158,6 +184,11 @@ const RoadmapView = () => {
           message={error || 'The requested roadmap could not be found or you do not have permission to access it.'}
           onRetry={fetchRoadmapDetail}
         />
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+          <Button variant="secondary" onClick={() => navigate('/roadmaps')}>
+            🗺️ View All Roadmaps
+          </Button>
+        </div>
       </div>
     );
   }
