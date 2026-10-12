@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axiosInstance from '../../services/axiosInstance';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import styles from './PomodoroTimer.module.css';
 
 const PRESETS = [
@@ -13,6 +14,7 @@ const QUEUE_STORAGE_KEY = 'studygen_pomodoro_queue';
 
 export default function PomodoroTimer({ onSessionLogged, isFocusMode = false }) {
   const { addToast } = useToast();
+  const { updateStreak, refreshStreak } = useAuth();
 
   // Settings
   const [focusDuration, setFocusDuration] = useState(25);
@@ -128,8 +130,13 @@ export default function PomodoroTimer({ onSessionLogged, isFocusMode = false }) 
           moduleId: sessionData.moduleId,
         });
 
-        const streak = res.data?.streak || 1;
-        addToast(`+${minutes} min logged · streak ${streak} 🔥`, 'success');
+        const streak = res.data?.streak;
+        if (typeof streak === 'number' && updateStreak) {
+          updateStreak(streak);
+        } else if (refreshStreak) {
+          refreshStreak();
+        }
+        addToast(`+${minutes} min logged · streak ${streak || 1} 🔥`, 'success');
 
         if (onSessionLogged) onSessionLogged();
       } catch (err) {
@@ -141,7 +148,7 @@ export default function PomodoroTimer({ onSessionLogged, isFocusMode = false }) 
         addToast("Couldn't save this session. Retry.", 'error');
       }
     },
-    [selectedModuleId, queuedSessions, addToast, onSessionLogged]
+    [selectedModuleId, queuedSessions, addToast, onSessionLogged, updateStreak, refreshStreak]
   );
 
   // Retry queued offline sessions

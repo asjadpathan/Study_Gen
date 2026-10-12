@@ -23,8 +23,8 @@
   width: 290px;
   min-width: 250px;
   max-width: 320px;
-  border-right: 1px solid var(--color-neutral-200, #e2e8f0);
-  background: #f8fafc;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -37,8 +37,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--color-neutral-200, #e2e8f0);
-  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .sidebarTitleWrap {
@@ -50,14 +50,14 @@
 .sidebarTitle {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-neutral-900, #0f172a);
+  color: var(--color-text);
   margin: 0;
 }
 
 .sessionCount {
   padding: 0.15rem 0.5rem;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--color-neutral-100);
+  color: var(--color-text-muted);
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -162,14 +162,14 @@
 }
 
 .sessionItem:hover {
-  background: #ffffff;
-  border-color: var(--color-neutral-200, #e2e8f0);
+  background: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 .sessionItemActive {
-  background: #ffffff;
-  border-color: #c7d2fe;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+  background: var(--color-surface);
+  border-color: var(--color-primary-light);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
 }
 
 .sessionItemActive::before {
@@ -201,14 +201,14 @@
 .sessionTitle {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-neutral-800, #1e293b);
+  color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .sessionItemActive .sessionTitle {
-  color: var(--color-primary, #6366f1);
+  color: var(--color-primary);
 }
 
 .contextTag {
@@ -350,4 +350,24 @@
   .sessionSidebar.mobileListVisible {
     transform: translateX(0);
   }
+}
+
+:global([data-theme='dark']) .tag_module {
+  background: rgba(244, 114, 182, 0.15);
+  color: #f472b6;
+}
+
+:global([data-theme='dark']) .tag_roadmap {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+:global([data-theme='dark']) .tag_document {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+:global([data-theme='dark']) .tag_general {
+  background: var(--color-neutral-100);
+  color: var(--color-text-muted);
 }

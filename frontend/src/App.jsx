@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicLayout from './components/PublicLayout'
 import AppShell from './layouts/AppShell'
@@ -32,12 +33,13 @@ import './App.css'
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes with Shared Navbar & Footer Layout */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Landing />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes with Shared Navbar & Footer Layout */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
           </Route>
 
@@ -81,6 +83,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    </ThemeProvider>
   )
 }
 

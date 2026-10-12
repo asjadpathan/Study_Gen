@@ -8,6 +8,10 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class StudyGenApplication {
 
+	static {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+	}
+
 	public static void main(String[] args) {
 		// Load .env from current directory
 		Dotenv.configure().ignoreIfMissing().systemProperties().load();

@@ -112,6 +112,45 @@
   border: 1px solid var(--color-neutral-200, #e2e8f0);
 }
 
+/* Header Right Section */
+.headerRight {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* View Toggle (6 Months vs Full Year) */
+.viewToggleGroup {
+  display: inline-flex;
+  background: var(--color-neutral-100, #f1f5f9);
+  border-radius: 8px;
+  padding: 2.5px;
+  border: 1px solid var(--color-neutral-200, #e2e8f0);
+}
+
+.viewToggleBtn {
+  border: none;
+  background: transparent;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-neutral-600, #64748b);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.viewToggleBtn:hover {
+  color: var(--color-neutral-900, #0f172a);
+}
+
+.viewToggleActive {
+  background: #ffffff;
+  color: var(--color-primary-600, #2563eb);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
 /* Legend */
 .legend {
   display: flex;
@@ -130,12 +169,139 @@
   padding: 0 2px;
 }
 
-/* Calendar Container */
+/* Calendar Viewport Container */
+.calendarViewportContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+/* Navigation Banner */
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.rangeIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-neutral-600, #475569);
+}
+
+.rangeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.rangeDotLive {
+  background: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.rangeText {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-neutral-700, #334155);
+}
+
+.navControls {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.scrollBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 7px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  background: var(--color-neutral-100, #f1f5f9);
+  color: var(--color-neutral-700, #334155);
+  border: 1px solid var(--color-neutral-200, #e2e8f0);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.scrollBtn:hover:not(:disabled) {
+  background: var(--color-neutral-200, #e2e8f0);
+  color: var(--color-neutral-900, #0f172a);
+  border-color: var(--color-neutral-300, #cbd5e1);
+}
+
+.scrollBtnDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.todayBtn {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.todayBtn:hover:not(:disabled) {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+
+.todayBtnCurrent {
+  background: #f8fafc;
+  color: #64748b;
+  border-color: #e2e8f0;
+  font-weight: 500;
+}
+
+/* Calendar Container & Horizontal Scroll Wrapper */
 .scrollWrapper {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
   padding-bottom: 6px;
+}
+
+/* 6-Month View Constrained to approx 26 weeks with smooth horizontal scroll */
+.sixMonthView {
+  max-width: min(100%, 535px);
+  border: 1px solid var(--color-neutral-200, #e2e8f0);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  background: var(--color-neutral-50, #f8fafc);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+/* Scrollbar polish */
+.scrollWrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollWrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.scrollWrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.scrollWrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .calendarContainer {
