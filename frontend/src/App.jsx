@@ -15,7 +15,6 @@ import RoadmapView from './pages/RoadmapView'
 import RoadmapsList from './pages/RoadmapsList'
 import StudyRoom from './pages/StudyRoom'
 import Resources from './pages/Resources'
-import Community from './pages/Community'
 import Profile from './pages/Profile'
 import Locked from './pages/Locked'
 import NotFound from './pages/NotFound'
@@ -72,7 +71,6 @@ function App() {
             <Route path="/study-room" element={<StudyRoom />} />
             <Route path="/career" element={<Career />} />
             <Route path="/resources" element={<Resources />} />
-            <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/locked" element={<Locked />} />
             <Route path="*" element={<NotFound />} />

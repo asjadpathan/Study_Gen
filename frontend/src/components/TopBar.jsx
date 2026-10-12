@@ -20,7 +20,6 @@ const pageTitleMap = {
   '/career': 'Career Paths',
   '/study-room': 'Study Room',
   '/resources': 'Resource Discovery',
-  '/community': 'Community Zone',
   '/profile': 'User Profile',
 };
 

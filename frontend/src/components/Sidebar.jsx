@@ -32,7 +32,6 @@ const navGroups = [
     items: [
       { label: 'Career',     path: '/career',    icon: '💼' },
       { label: 'Resources',  path: '/resources', icon: '🌐' },
-      { label: 'Community',  path: '/community', icon: '👥', soon: true },
     ],
   },
   {
